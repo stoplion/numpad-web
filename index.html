@@ -1,0 +1,226 @@
+<html>
+
+<head>
+    <link rel="stylesheet" href="css/app.css">
+    <link rel="stylesheet" href="css/print.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+    <script src="https://unpkg.com/mathjs@6.0.4/dist/math.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/1.49.2/plotly.min.js"></script>
+</head>
+
+<body>
+    <div id="wrapper">
+        <div class="appName">Numpad</div>
+        <div id="content" class="content">
+            <div id="lineNoCol" class="lineNoCol">
+                <div id="lineNo" class="syncscroll" name="col"></div>
+            </div>
+            <div id="inputCol" class="inputCol">
+                <textarea id="input" class="syncscroll" name="col" wrap="off" spellcheck="false"></textarea>
+            </div>
+            <div id="outputCol" class="outputCol">
+                <div id="output" class="syncscroll" name="col"></div>
+            </div>
+            <div id="scrollCol" class="scrollCol">
+                <div id="scroll" class="syncscroll" name="col"></div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <div class="leftActionButtons">
+                <a id="clearButton" class="svgButton" title="Clear Board">
+                    <svg fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                        stroke-width="2" viewBox="0 0 24 24" width="24">
+                        <polygon points="19 20 9 12 19 4 19 20" />
+                        <line x1="5" x2="5" y1="19" y2="5" /></svg>
+                </a>
+                <a id="printButton" class="svgButton" title="Print">
+                    <svg fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                        stroke-width="2" viewBox="0 0 24 24" width="24">
+                        <polyline points="6 9 6 2 18 2 18 9" />
+                        <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
+                        <rect height="8" width="12" x="6" y="14" /></svg>
+                </a>
+                <a id="saveButton" class="svgButton" title="Save">
+                    <svg fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                        stroke-width="2" viewBox="0 0 24 24" width="24">
+                        <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
+                        <polyline points="17 21 17 13 7 13 7 21" />
+                        <polyline points="7 3 7 8 15 8" /></svg>
+                </a>
+                <a id="openButton" class="svgButton" title="Open">
+                    <svg fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                        stroke-width="2" viewBox="0 0 24 24" width="24">
+                        <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" /></svg>
+                </a>
+                <a id="undoButton" class="svgButton undoButton" title="Undo">
+                    <svg fill="none" height="24" viewBox="0 0 24 24" width="24">
+                        <polyline points="9 14 4 9 9 4" troke-linecap="round" stroke-linejoin="round"
+                            stroke-width="2" />
+                        <path d="M20 20v-7a4 4 0 0 0-4-4H4" stroke-linecap="round" stroke-linejoin="round"
+                            stroke-width="2" /></svg>
+                </a>
+            </div>
+            <div id="msgBox" class="msgBox">
+                <span id="msg"></span>
+            </div>
+            <div class="rightActionButtons">
+                <a id="settingsButton" class="svgButton" title="Settings">
+                    <svg fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                        stroke-width="2" viewBox="0 0 24 24" width="24">
+                        <circle cx="12" cy="12" r="3" />
+                        <path
+                            d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
+                    </svg>
+                </a>
+                <a id="helpButton" class="svgButton" title="Help">
+                    <svg fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                        stroke-width="2" viewBox="0 0 24 24" width="24">
+                        <circle cx="12" cy="12" r="10" />
+                        <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+                        <line x1="12" x2="12" y1="17" y2="17" /></svg>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div id="dialog-plot" class="dialog-plot dialog" title="Plot Function">
+        <div id="plot"></div>
+    </div>
+
+    <div id="dialog-plotRange" class="dialog-plotRange dialog" title="Plot Range">
+        <div id="plotRange">
+            <div class="xAxis">
+                X-Axis:
+            </div>
+            <div class="xMinDiv">
+                Min: <input id="xMin" class="xMin" name="value">
+            </div>
+            <div class="xMaxDiv">
+                Max: <input id="xMax" class="xMax" name="value">
+            </div>
+            <div class="xAxis">
+                Y-Axis:
+            </div>
+            <div class="yMinDiv">
+                Min: <input id="yMin" class="yMin" name="value">
+            </div>
+            <div class="yMaxDiv">
+                Max: <input id="yMax" class="yMax" name="value">
+            </div>
+            <div class="stepSize">
+                Step Size:
+            </div>
+            <div class="stepDiv">
+                <input id="step" class="step" name="value">
+            </div>
+            <div class="stepDiv2"></div>
+        </div>
+    </div>
+
+    <div id="dialog-save" class="dialog-save dialog" title="Save Calculations">
+        Title: <input id="saveTitle" class="textBox" type="text" maxlength="20" placeholder="Optional">
+    </div>
+
+    <div id="dialog-open" class="dialog-open dialog" title="Saved Calculations"></div>
+
+    <div id="dialog-settings" class="dialog" title="Settings">
+        <div class="sc1 precision">
+            Answer precision
+        </div>
+        <div class="sc2">
+            <input id="precisionBox" class="precisionBox" name="value" readonly>
+        </div>
+        <div class="sc1 dateFormat">
+            Date output format
+        </div>
+        <div class="sc2">
+            <select id="dateFormat" class="dateFormatDD"></select>
+        </div>
+        <div class="divider"></div>
+        <div class="sc1">
+            Show line numbers
+        </div>
+        <div class="sc2">
+            <label class="switch">
+                <input id="lineNoButton" type="checkbox" checked>
+                <span class="slider round"></span>
+            </label>
+        </div>
+        <div class="sc1">
+            Show line errors
+        </div>
+        <div class="sc2">
+            <label class="switch">
+                <input id="lineErrorButton" type="checkbox" checked>
+                <span class="slider round"></span>
+            </label>
+        </div>
+        <div class="sc1">
+            Enable resizable panes
+        </div>
+        <div class="sc2">
+            <label class="switch">
+                <input id="resizeButton" type="checkbox" checked>
+                <span class="slider round"></span>
+            </label>
+        </div>
+        <div class="sc1">
+            Update exchange rates on start<br>
+            <a id="updateRatesButton" class="updateRatesLink">Update rates now</a>
+        </div>
+        <div class="sc2">
+            <label class="switch">
+                <input id="autoRatesButton" type="checkbox" checked>
+                <span class="slider round"></span>
+            </label>
+        </div>
+    </div>
+
+    <div id="dialog-help" class="dialog" title="Help">
+        <div class="helpBox">Search: <input id="searchBox" class="textBox" type="text" maxlength="100"
+                placeholder="Start typing to search..."></div>
+        <div id="searchResults">Start typing above to search...</div>
+    </div>
+
+    <div id="dialog-clear-confirm" class="dialog" title="Clear the board?">
+        <p>All calculations will be permanently deleted. Are you sure?</p>
+    </div>
+
+    <div id="dialog-defaults-confirm" class="dialog" title="Revert back to default settings?">
+        <p>All settings will be reset. Are you sure?</p>
+    </div>
+
+    <div id="dialog-delete-confirm" class="dialog" title="Delete all saved items?">
+        <p>All saved calculations will be deleted. Are you sure?</p>
+    </div>
+
+    <div id="dialog-deleteSaved-confirm" class="dialog" title="Delete this item?">
+        <p>Are you sure?</p>
+    </div>
+
+    <div id="dialog-showError" class="dialog" title="Error">
+        <span id="errMsg"></span>
+    </div>
+
+    <div class="printArea">
+        <div class="printHeader">
+            <span class="print-title"></span>
+        </div>
+        <div class="printBoxes">
+            <div id="printLines"></div>
+            <div id="printInput"></div>
+            <div id="printOutput"></div>
+        </div>
+    </div>
+
+    <script src="js/calculate.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/syncscroll.js"></script>
+</body>
+
+</html>

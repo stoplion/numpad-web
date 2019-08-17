@@ -1,0 +1,519 @@
+/**
+ * @copyright 2019 Timur Atalay 
+ * @Homepage https://github.com/bornova/numpad
+ * @license MIT https://github.com/bornova/numpad/blob/master/LICENSE
+ */
+
+* {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    outline: none;
+    user-select: none;
+    border: none;
+    resize: none;
+    background: none;
+}
+
+html {
+    -ms-overflow-style: -ms-autohiding-scrollbar;
+}
+
+/* UI defaults */
+body {
+    height: 100%;
+    font-family: 'Open Sans', 'Helvetica Neue';
+}
+
+::-webkit-scrollbar {
+    width: 8px;
+    height: 0px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgb(255, 255, 255);
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgb(238, 238, 238);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgb(204, 204, 204);
+}
+
+select {
+    position: relative;
+    color: rgb(51, 51, 51);
+    z-index: 1000;
+}
+
+textarea {
+    width: 100%;
+    height: 100%;
+    font-family: 'Menlo', 'Consolas';
+    box-sizing: border-box;
+}
+
+a {
+    cursor: pointer;
+}
+
+.hidden {
+    display: none;
+}
+
+/* Content */
+.appName {
+    font-size: 13px;
+    font-weight: 600;
+    margin: 5px;
+    color: #235788;
+    text-align: center;
+}
+
+#wrapper {
+    height: 100%;
+}
+
+.content {
+    position: fixed;
+    top: 35px;
+    bottom: 40px;
+    left: 12px;
+    right: 10px;
+    display: flex;
+    flex: auto;
+}
+
+.syncscroll {
+    font-size: 14px;
+    line-height: 1.8em;
+}
+
+.textBox {
+    font-family: inherit;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+}
+
+.textBox::placeholder {
+    font-size: 11px;
+    color: rgba(176, 189, 196, 0.6);
+}
+
+#lineNo::-webkit-scrollbar,
+#input::-webkit-scrollbar,
+#output::-webkit-scrollbar {
+    width: 0px;
+    height: 8px;
+}
+
+#lineNo,
+#input,
+#output,
+#scroll {
+    display: block;
+    font-family: 'Menlo', 'Consolas';
+    overflow: scroll;
+    height: 100%;
+}
+
+.lineError {
+    color: rgb(126, 24, 24);
+}
+
+.lineNoCol {
+    width: 30px;
+    min-width: 30px;
+    margin-right: 12px;
+}
+
+#lineNo {
+    color: rgb(200, 200, 200);
+    text-align: right;
+}
+
+.inputCol {
+    min-width: 100px;
+    margin-right: 10px;
+}
+
+#input {
+    color: #444444;
+    user-select: text;
+}
+
+.outputCol {
+    flex: 1;
+    min-width: 100px;
+}
+
+#output {
+    font-weight: 400;
+    white-space: nowrap;
+    color: rgb(23, 88, 107);
+    user-select: text;
+}
+
+.scrollCol {
+    width: 20px;
+    min-width: 20px;
+}
+
+.plotButton>svg {
+    cursor: pointer;
+    stroke: rgb(23, 88, 107);
+    width: 14px;
+    height: 2em;
+    margin-top: -1px;
+}
+
+.plotButton>svg:hover {
+    stroke: rgb(31, 119, 180);
+}
+
+.xAxis,
+.yAxis,
+.stepSize {
+    float: left;
+    clear: both;
+    width: 75px;
+    height: 40px;
+}
+
+.xAxis {
+    margin-top: 21px;
+}
+
+.stepSize {
+    margin-top: 14px;
+}
+
+.stepDiv,
+.stepDiv2 {
+    margin-top: 10px;
+}
+
+.xMinDiv,
+.xMaxDiv,
+.yMinDiv,
+.yMaxDiv,
+.stepDiv,
+.stepDiv2 {
+    float: left;
+    width: 100px;
+}
+
+.xMin,
+.xMax,
+.yMin,
+.yMax,
+.step,
+.step2 {
+    width: 50px;
+}
+
+.modebar-container {
+    height: 24px !important;
+}
+
+.footer {
+    position: fixed;
+    bottom: 10px;
+    left: 15px;
+    right: 15px;
+    display: flex;
+    font-size: 12px;
+    color: rgb(153, 153, 153);
+    height: 16px;
+    min-height: 16px;
+}
+
+.footer>div {
+    flex: auto;
+}
+
+/* Action item buttons */
+.undoButton {
+    display: none;
+}
+
+.undoButton svg {
+    stroke: rgb(0, 66, 99) !important;
+}
+
+.svgButton:hover {
+    cursor: pointer;
+}
+
+.svgButton svg {
+    cursor: pointer;
+    stroke: rgb(144, 165, 177);
+    height: 16px;
+    width: 16px;
+}
+
+.svgButton svg:hover {
+    cursor: pointer;
+    stroke: rgb(0, 66, 99);
+}
+
+.leftActionButtons {
+    min-width: 120px;
+    height: 24px;
+}
+
+.leftActionButtons a {
+    margin-right: 8px;
+}
+
+.rightActionButtons {
+    min-width: 120px;
+    height: 24px;
+    text-align: right;
+}
+
+.rightActionButtons a {
+    margin-left: 8px;
+}
+
+/* Dialogs */
+.dialog {
+    display: none;
+}
+
+/* Saved dialog Items */
+.dialog-open-wrapper {
+    background: rgba(244, 244, 244, 0.3);
+    border: 1px solid #eaeaea;
+    margin-bottom: 5px;
+}
+
+.dialog-open-left {
+    clear: both;
+    float: left;
+    width: 88%;
+    cursor: pointer;
+    padding: 5px;
+}
+
+.dialog-open-right {
+    float: right;
+    text-align: right;
+    font-weight: 600;
+    font-size: 11px;
+    cursor: pointer;
+    color: rgb(126, 24, 24);
+    padding: 3px 5px;
+}
+
+.dialog-open-right:hover {
+    background: rgb(179, 49, 49);
+    color: #ffffff;
+}
+
+.saveDate {
+    display: block;
+    color: #999999;
+    font-size: 11px;
+    margin-top: 3px;
+}
+
+.dialog-open-wrapper:hover {
+    background: #f4f4f4;
+}
+
+/* Help dialog Items */
+.helpBox {
+    margin-bottom: 10px;
+    border-bottom: 1px solid #eaeaea;
+    padding-bottom: 10px;
+}
+
+#searchResults {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+#searchResults>div {
+    flex: 1 1 calc(100% - 80px);
+    margin-bottom: 5px;
+    user-select: text;
+}
+
+#searchResults>div:nth-child(odd) {
+    font-weight: 600;
+    flex: 0 0 80px;
+}
+
+/* Messages */
+.msgBox {
+    font-size: 11px;
+    text-align: center;
+    color: rgb(0, 102, 153);
+    min-width: 100px;
+}
+
+/* Settings menu items */
+.divider {
+    display: block;
+    height: 5px;
+    clear: both;
+}
+
+.sc1 {
+    float: left;
+    clear: both;
+    margin: 5px 0 5px 0;
+    line-height: 16px;
+}
+
+.sc2 {
+    float: right;
+    text-align: right;
+    margin: 5px 0 5px 0;
+}
+
+.precision {
+    margin-top: 10px;
+}
+
+.dateFormat {
+    margin-top: 13px;
+}
+
+.precisionBox {
+    width: 16px;
+    padding: 2px 0 2px 2px !important;
+}
+
+#dateFormat-button {
+    width: 125px !important;
+    padding: 0.5em 0.1em 0.4em 1em !important;
+    margin: 0 !important;
+    background: none !important;
+}
+
+.updateRatesLink {
+    display: inline-block;
+    color: #235788 !important;
+    font-size: 11px;
+}
+
+.updateRatesLink:hover {
+    color: #5a85ad !important;
+}
+
+
+/* Toggle buttons */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 28px;
+    height: 16px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgb(204, 204, 204);
+    -webkit-transition: .3s;
+    transition: .3s;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 12px;
+    width: 12px;
+    left: 2px;
+    bottom: 2px;
+    background-color: white;
+    -webkit-transition: .3s;
+    transition: .3s;
+}
+
+.slider.round {
+    border-radius: 16px;
+}
+
+.slider.round:before {
+    border-radius: 50%;
+}
+
+input:checked+.slider {
+    background-color: rgb(33, 150, 243);
+}
+
+input:checked+.slider:before {
+    -webkit-transform: translateX(12px);
+    -ms-transform: translateX(12px);
+    transform: translateX(12px);
+}
+
+/* jQuery UI Overrides */
+.ui-widget {
+    font-family: inherit !important;
+    font-size: 12px !important;
+}
+
+.ui-widget-header {
+    background: none !important;
+    border: none !important;
+}
+
+.ui-dialog {
+    overflow: visible !important;
+}
+
+.ui-dialog-title {
+    color: rgb(57, 87, 116) !important;
+}
+
+.ui-dialog .ui-dialog-buttonpane {
+    margin-top: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+}
+
+.ui-dialog .ui-dialog-titlebar-close {
+    display: none !important;
+}
+
+.ui-widget-overlay {
+    opacity: .5 !important;
+}
+
+.ui-resizable-e {
+    cursor: col-resize !important;
+}
+
+.ui-selectmenu-open {
+    z-index: 999999 !important;
+}
+
+.ui-tooltip {
+    max-height: 100px;
+}
+
+.ui-button:active {
+    background-color: rgba(33, 150, 243, 0.8) !important;
+    border-color: rgba(33, 150, 243, 0.8) !important;
+}
+
+.gtitle {
+    font-size: 14px !important;
+}

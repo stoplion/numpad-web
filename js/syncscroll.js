@@ -56,7 +56,7 @@
             }
 
             el = el.scroller || el;
-            for (j  in (names[name] = names[name] || [])) {
+            for (j in (names[name] = names[name] || [])) {
                 found |= names[name][j++] == el;
             }
 

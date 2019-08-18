@@ -514,6 +514,33 @@ input:checked+.slider:before {
     border-color: rgba(33, 150, 243, 0.8) !important;
 }
 
+.reset {
+    border-color: transparent !important;
+    background: none !important;
+    position: absolute !important;
+    left: 10px !important;
+    color: rgb(145, 38, 38) !important;
+}
+
+.reset:hover,
+.reset:active {
+    background: rgba(145, 38, 38, 0.2) !important;
+    border-color: rgba(145, 38, 38, 0.2) !important;
+    color: rgb(145, 38, 38) !important;
+}
+
+.reset-confirm {
+    background: rgba(145, 38, 38, 0.9) !important;
+    border-color: rgba(145, 38, 38, 1) !important;
+    color: #fff !important;
+}
+
+.reset-confirm:hover,
+.reset-confirm:active {
+    background: rgba(145, 38, 38, 0.7) !important;
+    border-color: rgba(145, 38, 38, 0.8) !important;
+}
+
 .gtitle {
     font-size: 14px !important;
 }

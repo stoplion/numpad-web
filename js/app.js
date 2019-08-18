@@ -457,6 +457,7 @@ $('#settingsButton').click(() => {
         height: 300,
         width: 300,
         open: () => {
+            d.siblings('.ui-dialog-buttonpane').find('button:eq(0)').addClass('reset');
             $('#dateFormat').selectmenu();
             $('#precisionBox').spinner({
                 min: 0,
@@ -464,6 +465,21 @@ $('#settingsButton').click(() => {
             });
         },
         buttons: {
+            'Reset': () => {
+                var d = $('#dialog-reset-confirm');
+                d.dialog({
+                    height: 120,
+                    width: 350,
+                    buttons: {
+                        'Reset': () => {
+                            localStorage.clear();
+                            location.reload();
+                        },
+                        Cancel: () => d.dialog('close')
+                    },
+                    open: () => d.siblings('.ui-dialog-buttonpane').find('button:eq(0)').addClass('reset-confirm')
+                });
+            },
             'Save': () => {
                 settings.precision = $('#precisionBox').spinner('value');
                 settings.dateFormat = $('#dateFormat').val();

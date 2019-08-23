@@ -320,8 +320,10 @@ $(window).resize(() => {
 // Clear board
 $('#clearButton').click(() => {
     if ($('#input').val()) {
-        var d = $('#dialog-clear-confirm');
+        var d = $('#dialog-confirm');
+        $("#confirmMsg").html('All calculations will be permanently deleted. Are you sure?');
         d.dialog({
+            title: 'Clear the board?',
             height: 130,
             width: 300,
             buttons: {
@@ -379,8 +381,10 @@ $('#openButton').click(() => {
         open: () => populateSaved(),
         buttons: {
             'Delete All': () => {
-                var d = $('#dialog-delete-confirm');
+                var d = $('#dialog-confirm');
+                $("#confirmMsg").html('All saved calculations will be deleted. Are you sure?');
                 d.dialog({
+                    title: 'Delete all saved items?',
                     height: 130,
                     width: 250,
                     buttons: {
@@ -425,8 +429,10 @@ function loadSaved(id) {
 }
 
 function deleteSaved(id) {
-    var d = $('#dialog-deleteSaved-confirm');
+    var d = $('#dialog-confirm');
+    $("#confirmMsg").html('Are you sure?');
     d.dialog({
+        title: 'Delete this item?',
         height: 120,
         width: 200,
         buttons: {
@@ -466,8 +472,10 @@ $('#settingsButton').click(() => {
         },
         buttons: {
             'Reset': () => {
-                var d = $('#dialog-reset-confirm');
+                var d = $('#dialog-confirm');
+                $("#confirmMsg").html('All custom settings and data will be lost. Are you sure?');
                 d.dialog({
+                    title: 'Reset application?',
                     height: 120,
                     width: 350,
                     buttons: {
@@ -493,8 +501,10 @@ $('#settingsButton').click(() => {
                 d.dialog('close');
             },
             'Defaults': () => {
-                var d = $('#dialog-defaults-confirm');
+                var d = $('#dialog-confirm');
+                $("#confirmMsg").html('All settings will be reset. Are you sure?');
                 d.dialog({
+                    title: 'Revert back to default settings?',
                     height: 120,
                     width: 280,
                     buttons: {

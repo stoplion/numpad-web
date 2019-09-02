@@ -51,18 +51,14 @@
         for (i = 0; i < elems.length;) {
             found = j = 0;
             el = elems[i++];
-            if (!(name = el.getAttribute('name'))) {
-                continue;
-            }
+            if (!(name = el.getAttribute('name'))) continue;
 
             el = el.scroller || el;
             for (j in (names[name] = names[name] || [])) {
                 found |= names[name][j++] == el;
             }
 
-            if (!found) {
-                names[name].push(el);
-            }
+            if (!found) names[name].push(el);
 
             el.eX = el.eY = 0;
             scrollSync(el, name);

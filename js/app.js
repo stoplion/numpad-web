@@ -26,12 +26,9 @@
         set: (key, value) => localStorage.setItem(key, JSON.stringify(value))
     };
 
-<<<<<<< HEAD
     $('.header-mac-title, .print-title').html('Numpad');
     $('#header-mac, .leftActions, .rightActions').css('display', 'block');
 
-=======
->>>>>>> 5a625df4051c907c6dbf34a24e235ef8e72066f4
     // Default content if first visit
     if (!db.get('firstTime')) {
         $('#input').val(
@@ -87,11 +84,7 @@
     }
 
     // Load last calculations and calculate on input change
-<<<<<<< HEAD
     $('#input').on('input', calculate);
-=======
-    $('#input').on('input', calculate).val(db.get('input'));
->>>>>>> 5a625df4051c907c6dbf34a24e235ef8e72066f4
 
     // Apply settings
     function applySettings() {
@@ -550,11 +543,7 @@
                         range: [plotRange.yMin, plotRange.yMax]
                     }
                 };
-<<<<<<< HEAD
                 Plotly.newPlot('plot', data, layout, {
-=======
-                plotly.newPlot('plot', data, layout, {
->>>>>>> 5a625df4051c907c6dbf34a24e235ef8e72066f4
                     scrollZoom: true
                 });
             } catch (e) {
@@ -576,11 +565,7 @@
                 width: w - 50,
                 height: h - 70
             });
-<<<<<<< HEAD
             Plotly.relayout('plot', {
-=======
-            plotly.relayout('plot', {
->>>>>>> 5a625df4051c907c6dbf34a24e235ef8e72066f4
                 width: w - 75,
                 height: h - 160
             });

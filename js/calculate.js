@@ -144,4 +144,4 @@ function calculate() {
 
         return solve(line, scope);
     }
-};
+}

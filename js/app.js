@@ -228,7 +228,7 @@
                         height: 130,
                         buttons: {
                             'Delete': () => {
-                                localStorage.delete('saved');
+                                localStorage.removeItem('saved');
                                 populateSaved();
                                 d.dialog('close');
                             },

@@ -2,7 +2,6 @@
  * @copyright 2019 Timur Atalay 
  * @homepage https://github.com/bornova/numpad
  * @license MIT https://github.com/bornova/numpad/blob/master/LICENSE
- * @attributions Calculations performed by http://mathjs.org
  */
 
 // Calculate answers

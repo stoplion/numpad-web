@@ -7,14 +7,18 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/6.2.1/math.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/6.2.1/math.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/1.49.4/plotly.min.js"></script>
-    <script src="js/calculate.js"></script>
 </head>
 
 <body>
     <div id="wrapper">
+        <div id="header-win" class="header-win">
+            <div class="header-win-icon"><img src="assets/icon.ico"></div>
+            <div class="header-win-title"></div>
+        </div>
+
         <div id="header-mac" class="header-mac">
             <div class="header-mac-title"></div>
         </div>
@@ -204,11 +208,10 @@
         </div>
         <div class="dialog-about-links">
             <div>
-                <a href="https://github.com/bornova/numpad-web" id="openUrl" target="_blank">GitHub</a>
+                <a href="https://github.com/bornova/numpad" id="openUrl" target="_blank">GitHub</a>
             </div>
             <div>
-                <a href="https://github.com/bornova/numpad-web/blob/master/LICENSE" id="openUrl"
-                    target="_blank">Licence</a>
+                <a href="https://github.com/bornova/numpad/blob/master/LICENSE" id="openUrl" target="_blank">Licence</a>
             </div>
         </div>
     </div>
@@ -239,6 +242,7 @@
         </div>
     </div>
 
+    <script src="js/calculate.js"></script>
     <script src="js/app.js"></script>
     <script src="js/syncscroll.js"></script>
 </body>

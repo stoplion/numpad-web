@@ -5,8 +5,10 @@
  */
 
 (() => {
+    const appName = 'Numpad';
+    const appVersion = '3.1.0';
     const db = {
-        def: {
+        defaults: {
             'precision': '4',
             'dateFormat': 'l',
             'inputWidth': '50%',
@@ -26,8 +28,35 @@
         set: (key, value) => localStorage.setItem(key, JSON.stringify(value))
     };
 
-    $('.header-mac-title, .print-title').html('Numpad');
-    $('#header-mac, .leftActions, .rightActions').css('display', 'block');
+    document.title = appName;
+
+    // OS specific headers
+    $('.header-win-title, .header-mac-title, .print-title').html(appName);
+    if (navigator.appVersion.indexOf('Win') !== -1) {
+        $('#header-mac').remove();
+        $('#header-win, .leftActions, .rightActions').css('display', 'block');
+        $('.syncscroll').css({
+            'font-size': '14px',
+            'line-height': '1.9em'
+        });
+        $('.min').click(() => win.minimize());
+        $('.close').click(() => win.close());
+        $('.max, .unmax').click(() => {
+            if (win.isMaximized()) {
+                win.unmaximize();
+            } else {
+                win.maximize();
+                $('.max').toggle(win.isNormal());
+                $('.unmax').toggle(win.isMaximized());
+            }
+        });
+    } else {
+        $('#header-win').remove();
+        $('#header-mac, .leftActions, .rightActions').css('display', 'block');
+    }
+
+    // Load last calculations and calculate on input change
+    $('#input').on('input', calculate).val(db.get('input'));
 
     // Default content if first visit
     if (!db.get('firstTime')) {
@@ -83,12 +112,9 @@
         $('#input').val(db.get('input'));
     }
 
-    // Load last calculations and calculate on input change
-    $('#input').on('input', calculate);
-
     // Apply settings
     function applySettings() {
-        var settings = db.get('settings') || (db.set('settings', db.def), db.def);
+        var settings = db.get('settings') || (db.set('settings', db.defaults), db.defaults);
         $('#lineNoCol, #printLines').toggle(settings.lineNumbers);
         $('#inputCol, #printInput').resizable({
             disabled: !settings.resizable,
@@ -162,7 +188,7 @@
     $('#clearButton').click(() => {
         if ($('#input').val()) {
             var d = $('#dialog-confirm');
-            $("#confirmMsg").html('All calculations will be permanently deleted. Are you sure?');
+            $('#confirmMsg').html('All calculations will be permanently deleted. Are you sure?');
             d.dialog({
                 title: 'Clear the board?',
                 height: 130,
@@ -221,7 +247,7 @@
             buttons: {
                 'Delete All': () => {
                     var d = $('#dialog-confirm');
-                    $("#confirmMsg").html('All saved calculations will be deleted. Are you sure?');
+                    $('#confirmMsg').html('All saved calculations will be deleted. Are you sure?');
                     d.dialog({
                         title: 'Delete all saved items?',
                         width: 250,
@@ -272,7 +298,7 @@
             $('.dialog-open-right').click(function () {
                 var id = $(this).attr('id');
                 var d = $('#dialog-confirm');
-                $("#confirmMsg").html('Are you sure?');
+                $('#confirmMsg').html('Are you sure?');
                 d.dialog({
                     title: 'Delete this item?',
                     width: 200,
@@ -309,7 +335,7 @@
             buttons: {
                 'Reset': () => {
                     var d = $('#dialog-confirm');
-                    $("#confirmMsg").html('All custom settings and data will be lost. Are you sure?');
+                    $('#confirmMsg').html('All custom settings and data will be lost. Are you sure?');
                     d.dialog({
                         title: 'Reset application?',
                         width: 350,
@@ -338,18 +364,18 @@
                 },
                 'Defaults': () => {
                     var d = $('#dialog-confirm');
-                    $("#confirmMsg").html('All settings will be reset. Are you sure?');
+                    $('#confirmMsg').html('All settings will be reset. Are you sure?');
                     d.dialog({
                         title: 'Revert back to default settings?',
                         width: 280,
                         height: 120,
                         buttons: {
                             'Set Defaults': () => {
-                                db.set('settings', db.def);
+                                db.set('settings', db.defaults);
                                 applySettings();
                                 d.dialog('close');
                                 $('#dialog-settings').dialog('close');
-                                showMsg("Default settings applied");
+                                showMsg('Default settings applied');
                             },
                             Cancel: () => d.dialog('close')
                         }
@@ -370,7 +396,7 @@
                     '<option value="ddd, l">' + moment().format('ddd, l') + '</option>' +
                     '<option value="ddd, L">' + moment().format('ddd, L') + '</option>' +
                     '<option value="ddd, MMM DD, YYYY">' + moment().format('ddd, MMM DD, YYYY') + '</option>'
-                ).selectmenu().val(settings.dateFormat).selectmenu("refresh");
+                ).selectmenu().val(settings.dateFormat).selectmenu('refresh');
                 $('#resizeButton').prop('checked', settings.resizable);
                 $('#lineNoButton').prop('checked', settings.lineNumbers);
                 $('#lineErrorButton').prop('checked', settings.lineErrors);
@@ -389,8 +415,8 @@
                 'Ok': () => d.dialog('close')
             },
             open: () => {
-                $('.dialog-about-title').html('Numpad Calculator');
-                $('#dialog-about-appVersion').html('Version 1.0.0');
+                $('.dialog-about-title').html(appName + ' Calculator');
+                $('#dialog-about-appVersion').html('Version ' + appVersion);
             }
         });
     });
@@ -470,14 +496,14 @@
                             },
                             'Reset': () => {
                                 var d2 = $('#dialog-confirm');
-                                $("#confirmMsg").html('Are you sure?');
+                                $('#confirmMsg').html('Are you sure?');
                                 d2.dialog({
                                     title: 'Reset plot range to defaults?',
                                     height: 120,
                                     width: 280,
                                     buttons: {
                                         'Yes': () => {
-                                            settings.plotRange = db.def.plotRange;
+                                            settings.plotRange = db.defaults.plotRange;
                                             db.set('settings', settings);
                                             d.dialog('close');
                                             d2.dialog('close');
@@ -571,9 +597,9 @@
             });
         }
 
-        $(".ui-dialog-content").dialog("option", "position", {
-            my: "center",
-            at: "center",
+        $('.ui-dialog-content').dialog('option', 'position', {
+            my: 'center',
+            at: 'center',
             of: window
         });
     });

@@ -8,27 +8,11 @@
  * Modified by Timur Atalay
  */
 
-((root, factory) => {
-    if (typeof define === 'function' && define.amd) {
-        define(['exports'], factory);
-    } else if (typeof exports !== 'undefined') {
-        factory(exports);
-    } else {
-        factory((root.syncscroll = {}));
-    }
-})(this, (exports) => {
+(() => {
     var names = {};
     var scroll = () => {
         var elems = document.getElementsByClassName('syncscroll');
         var i, j, el, found, name;
-        for (name in names) {
-            if (names.hasOwnProperty(name)) {
-                for (i in names[name]) {
-                    names[name][i].removeEventListener('scroll', names[name][i].syn, 0);
-                }
-            }
-        }
-
         var scrollSync = (el, name) => {
             el.addEventListener('scroll', el.syn = () => {
                 var elems = names[name];
@@ -54,7 +38,7 @@
             if (!(name = el.getAttribute('name'))) continue;
 
             el = el.scroller || el;
-            for (j in (names[name] = names[name] || [])) {
+            for (j  in (names[name] = names[name] || [])) {
                 found |= names[name][j++] == el;
             }
 
@@ -70,6 +54,4 @@
     } else {
         window.addEventListener('load', scroll, 0);
     }
-
-    exports.scroll = scroll;
-});
+})();

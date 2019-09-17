@@ -71,7 +71,7 @@ function calculate() {
                     scope.total = totals.reduce((a, b) => a + b, 0);
 
                     if (answer.match(/\w\(x\)/)) {
-                        answer = '<a title="Plot" class="plotButton" data-func="' + line + '"><svg height="24" viewBox="0 0 24 24" width="24"><polyline fill="none" points="23 6 13.5 15.5 8.5 10.5 1 18" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/><polyline fill="none" points="17 6 23 6 23 12" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/></svg></a>';
+                        answer = '<a title="Plot" class="plotButton" data-func="' + line + '"><svg height="26" viewBox="0 0 24 24" width="26"><polyline fill="none" points="23 6 13.5 15.5 8.5 10.5 1 18" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/><polyline fill="none" points="17 6 23 6 23 12" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/></svg></a>';
                         scope.ans = scope['line' + lineNo] = line.split('=')[1].trim();
                     }
                 }

@@ -90,6 +90,10 @@ h2 {
 }
 
 .uk-width-medium {
+    width: 300px !important;
+}
+
+.uk-width-large {
     width: 370px !important;
 }
 

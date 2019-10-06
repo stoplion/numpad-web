@@ -1,246 +1,323 @@
 <html>
 
 <head>
-    <link rel="stylesheet" href="css/app.css">
-    <link rel="stylesheet" href="css/print.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.2.0/css/uikit.min.css">
+    <link rel="stylesheet" href="./css/overrides.css">
+    <link rel="stylesheet" href="./css/numpad.css">
+    <link rel="stylesheet" href="./css/print.css">
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/6.2.1/math.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.2.0/js/uikit.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/6.2.2/math.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/1.49.4/plotly.min.js"></script>
-    <script src="js/calculate.js"></script>
 </head>
 
 <body>
-    <div id="wrapper">
+    <div id="wrapper" class="wrap">
+        <div id="header-win" class="header-win">
+            <div class="header-win-icon"><img src="./assets/icon.ico"></div>
+            <div id="header-win-title" class="header-win-title"></div>
+            <div id="winButtons" class="winButtons">
+                <span id="close" class="close-btn-win" title="Exit"></span>
+                <span id="max" class="max-btn-win" title="Maximize"></span>
+                <span id="unmax" class="unmax-btn-win" title="Unmaximize"></span>
+                <span id="min" class="min-btn-win" title="Minimize"></span>
+            </div>
+        </div>
+
         <div id="header-mac" class="header-mac">
-            <div class="header-mac-title"></div>
+            <div id="header-mac-title" class="header-mac-title"></div>
         </div>
 
         <div id="content" class="content">
-            <div id="lineNoCol" class="lineNoCol">
-                <div id="lineNo" class="syncscroll" name="col"></div>
+            <div id="lineNo" class="lineNo syncscroll" name="col"></div>
+            <div id="inputCol" class="inputCol resize">
+                <textarea id="input" class="input syncscroll" name="col" wrap="off"></textarea>
             </div>
-            <div id="inputCol" class="inputCol">
-                <textarea id="input" class="syncscroll mousetrap" name="col" wrap="off"></textarea>
-            </div>
-            <div id="outputCol" class="outputCol">
-                <div id="output" class="syncscroll" name="col"></div>
-            </div>
-            <div id="scrollCol" class="scrollCol">
-                <div id="scroll" class="syncscroll" name="col"></div>
-            </div>
+            <div id="handle" class="handle"></div>
+            <div id="output" class="output syncscroll" name="col"></div>
+            <div id="scroll" class="scroll syncscroll" name="col"></div>
         </div>
 
-        <div class="footer">
-            <div class="leftActions">
-                <a id="clearButton" class="svgButton" title="Clear Board">
-                    <svg fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                        stroke-width="2" viewBox="0 0 24 24" width="24">
-                        <polygon points="19 20 9 12 19 4 19 20" />
-                        <line x1="5" x2="5" y1="19" y2="5" /></svg>
-                </a>
-                <a id="printButton" class="svgButton" title="Print">
-                    <svg fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                        stroke-width="2" viewBox="0 0 24 24" width="24">
-                        <polyline points="6 9 6 2 18 2 18 9" />
-                        <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
-                        <rect height="8" width="12" x="6" y="14" /></svg>
-                </a>
-
-                <a id="saveButton" class="svgButton" title="Save">
-                    <svg fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                        stroke-width="2" viewBox="0 0 24 24" width="24">
-                        <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
-                        <polyline points="17 21 17 13 7 13 7 21" />
-                        <polyline points="7 3 7 8 15 8" /></svg>
-                </a>
-                <a id="openButton" class="svgButton" title="Open">
-                    <svg fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                        stroke-width="2" viewBox="0 0 24 24" width="24">
-                        <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" /></svg>
-                </a>
-                <a id="undoButton" class="svgButton undoButton" title="Undo">
-                    <svg fill="none" height="24" viewBox="0 0 24 24" width="24">
-                        <polyline points="9 14 4 9 9 4" troke-linecap="round" stroke-linejoin="round"
-                            stroke-width="2" />
-                        <path d="M20 20v-7a4 4 0 0 0-4-4H4" stroke-linecap="round" stroke-linejoin="round"
-                            stroke-width="2" /></svg>
-                </a>
+        <div id="actions" class="actions">
+            <div id="leftActions" class="leftActions">
+                <a id="clearButton" title="Clear Board" uk-tooltip></a>
+                <a id="printButton" title="Print" uk-tooltip></a>
+                <a id="saveButton" title="Save" uk-tooltip></a>
+                <a id="openButton" class="action" title="Open" uk-tooltip></a>
+                <a id="undoButton" class="action" title="Undo"></a>
             </div>
             <div id="msgBox" class="msgBox">
-                <span id="msg"></span>
+                <span id="msg" class="msg"></span>
             </div>
-            <div class="rightActions">
-                <a id="settingsButton" class="svgButton" title="Settings">
-                    <svg fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                        stroke-width="2" viewBox="0 0 24 24" width="24">
-                        <circle cx="12" cy="12" r="3" />
-                        <path
-                            d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
-                    </svg>
-                </a>
-                <a id="helpButton" class="svgButton" title="Help">
-                    <svg fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                        stroke-width="2" viewBox="0 0 24 24" width="24">
-                        <circle cx="12" cy="12" r="10" />
-                        <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
-                        <line x1="12" x2="12" y1="17" y2="17" /></svg>
-                </a>
-                <a id="aboutButton" class="svgButton" title="About">
-                    <svg fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                        stroke-width="2" viewBox="0 0 24 24" width="24">
-                        <circle cx="12" cy="12" r="10" />
-                        <line x1="12" x2="12" y1="16" y2="12" />
-                        <line x1="12" x2="12" y1="8" y2="8" /></svg>
-                </a>
+            <div id="rightActions" class="rightActions">
+                <a id="settingsButton" class="action" title="Settings" uk-tooltip></a>
+                <a id="helpButton" class="action" title="Help" uk-tooltip></a>
+                <a id="aboutButton" class="action" title="About" uk-tooltip></a>
             </div>
         </div>
     </div>
 
-    <div id="dialog-plot" class="dialog-plot dialog" title="Plot Function">
-        <div id="plot"></div>
-    </div>
-
-    <div id="dialog-plotRange" class="dialog-plotRange dialog" title="Plot Range">
-        <div id="plotRange">
-            <div class="xAxis">
-                X-Axis:
-            </div>
-            <div class="xMinDiv">
-                Min: <input id="xMin" class="xMin" name="value">
-            </div>
-            <div class="xMaxDiv">
-                Max: <input id="xMax" class="xMax" name="value">
-            </div>
-            <div class="xAxis">
-                Y-Axis:
-            </div>
-            <div class="yMinDiv">
-                Min: <input id="yMin" class="yMin" name="value">
-            </div>
-            <div class="yMaxDiv">
-                Max: <input id="yMax" class="yMax" name="value">
-            </div>
-            <div class="stepSize">
-                Step Size:
-            </div>
-            <div class="stepDiv">
-                <input id="step" class="step" name="value">
-            </div>
-            <div class="stepDiv2"></div>
+    <div id="dialog-save" class="uk-modal">
+        <div class="uk-modal-dialog uk-modal-body uk-margin-auto-vertical uk-width-small">
+            <h2 class="uk-modal-title">Save Calculation</h2>
+            <input id="saveTitle" class="textBox" type="text" maxlength="20" placeholder="Title (Optional)">
+            <p class="uk-text-right">
+                <button id="dialog-save-save" class="uk-button uk-button-default uk-button-small"
+                    type="button">Save</button>
+                <button class="uk-button uk-button-default uk-modal-close uk-button-small" type="button">Cancel</button>
+            </p>
         </div>
     </div>
 
-    <div id="dialog-save" class="dialog-save dialog" title="Save Calculations">
-        Title: <input id="saveTitle" class="textBox" type="text" maxlength="20" placeholder="Optional">
-    </div>
-
-    <div id="dialog-open" class="dialog-open dialog" title="Open Calculations"></div>
-
-    <div id="dialog-settings" class="dialog" title="Settings">
-        <div class="sc1 precision">
-            Answer precision
-        </div>
-        <div class="sc2">
-            <input id="precisionBox" class="precisionBox" name="value" readonly>
-        </div>
-        <div class="sc1 dateFormat">
-            Date output format
-        </div>
-        <div class="sc2">
-            <select id="dateFormat" class="dateFormatDD"></select>
-        </div>
-        <div class="divider"></div>
-        <div class="sc1">
-            Show line numbers
-        </div>
-        <div class="sc2">
-            <label class="switch">
-                <input id="lineNoButton" type="checkbox" checked>
-                <span class="slider round"></span>
-            </label>
-        </div>
-        <div class="sc1">
-            Show line errors
-        </div>
-        <div class="sc2">
-            <label class="switch">
-                <input id="lineErrorButton" type="checkbox" checked>
-                <span class="slider round"></span>
-            </label>
-        </div>
-        <div class="sc1">
-            Enable resizable panes
-        </div>
-        <div class="sc2">
-            <label class="switch">
-                <input id="resizeButton" type="checkbox" checked>
-                <span class="slider round"></span>
-            </label>
-        </div>
-        <div class="sc1">
-            Update exchange rates on start<br>
-            <a id="updateRatesButton" class="updateRatesLink">Update now</a>
-        </div>
-        <div class="sc2">
-            <label class="switch">
-                <input id="autoRatesButton" type="checkbox" checked>
-                <span class="slider round"></span>
-            </label>
+    <div id="dialog-open" class="uk-modal">
+        <div class="uk-modal-dialog uk-modal-body uk-margin-auto-vertical uk-width-medium">
+            <h2 class="uk-modal-title">Open Calculation</h2>
+            <div id="dialog-open-body" class="dialog-open-body uk-overflow-auto"></div>
+            <p class="uk-text-right">
+                <button id="dialog-open-deleteAll" class="uk-button uk-button-danger uk-button-small"
+                    type="button">Delete All</button>
+                <button class="uk-button uk-button-default uk-modal-close uk-button-small" type="button">Cancel</button>
+            </p>
         </div>
     </div>
 
-    <div id="dialog-about" class="dialog">
-        <div class=dialog-about-header>
-            <span class="dialog-about-icon"><img src="assets/icon.ico"></span>
-            <span id="appname" class="dialog-about-title"></span>
+    <div id="dialog-settings" class="uk-modal">
+        <div class="uk-modal-dialog uk-modal-body uk-margin-auto-vertical uk-width-medium">
+            <div id="dialog-settings-body">
+                <h2 class="uk-modal-title">Settings</h2>
+                <div class="uk-child-width-expand" uk-grid>
+                    <div class="uk-width-2-5">Answer precision</div>
+                    <div class="uk-text-right uk-width-3-5">
+                        <div class="uk-child-width-expand" uk-grid>
+                            <div class="uk-text-right uk-width-2-5">
+                                <span id="precision-label" class="uk-label precision">1</span>
+                            </div>
+                            <div class="uk-text-right range uk-width-3-5">
+                                <input id="precisionRange" class="uk-range" name="value" type="range" min="0" max="16"
+                                    step="1">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="uk-child-width-expand" uk-grid>
+                    <div>Date output format</div>
+                    <div class="uk-text-right">
+                        <select id="dateFormat" class="uk-select"></select>
+                    </div>
+                </div>
+                <div class="uk-child-width-expand" uk-grid>
+                    <div>Show line numbers</div>
+                    <div class="uk-text-right">
+                        <label class="switch">
+                            <input id="lineNoButton" type="checkbox" checked>
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                </div>
+                <div class="uk-child-width-expand" uk-grid>
+                    <div>Show line errors</div>
+                    <div class="uk-text-right">
+                        <label class="switch">
+                            <input id="lineErrorButton" type="checkbox" checked>
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                </div>
+                <div class="uk-child-width-expand" uk-grid>
+                    <div>Enable resizable panes</div>
+                    <div class="uk-text-right">
+                        <label class="switch">
+                            <input id="resizeButton" type="checkbox" checked>
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                </div>
+                <div class="uk-child-width-expand" uk-grid>
+                    <div class="uk-width-4-5">
+                        Update exchange rates on start
+                        <a id="updateRatesButton" class="updateRatesLink">Update</a>
+                    </div>
+                    <div class="uk-text-right uk-width-1-5">
+                        <label class="switch">
+                            <input id="autoRatesButton" type="checkbox" checked>
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="spacer"></div>
+            <div uk-grid>
+                <div class="uk-width-1-4">
+                    <p class="uk-text-left">
+                        <button id="dialog-settings-reset" class="uk-button uk-button-danger uk-button-small"
+                            type="button">Reset</button>
+                    </p>
+                </div>
+                <div class="uk-width-3-4">
+                    <p class="uk-text-right">
+                        <button id="dialog-settings-save" class="uk-button uk-button-default uk-button-small"
+                            type="button">Save</button>
+                        <button id="dialog-settings-defaults" class="uk-button uk-button-default uk-button-small"
+                            type="button">Defaults</button>
+                        <button class="uk-button uk-button-default uk-modal-close uk-button-small"
+                            type="button">Cancel</button>
+                    </p>
+                </div>
+            </div>
         </div>
-        <div>
-            <span id="dialog-about-appVersion"></span>
-            <p>Copyright ©️ 2019 Timur Atalay</p>
+    </div>
+
+    <div id="dialog-help" class="uk-modal">
+        <div class="uk-modal-dialog uk-modal-body uk-margin-auto-vertical">
+            <h2 class="uk-modal-title">Help</h2>
+            <div class="helpBox"><input id="searchBox" class="textBox" type="text" maxlength="100"
+                    placeholder="Start typing to search..."></div>
+            <div id="searchResults" class="searchResults">Start typing above to search...</div>
+            <p class="uk-text-right">
+                <button class="uk-button uk-button-default uk-modal-close uk-button-small" type="button">OK</button>
+            </p>
         </div>
-        <div class="dialog-about-links">
+    </div>
+
+    <div id="dialog-about" class="dialog-about uk-modal">
+        <div class="uk-modal-dialog uk-modal-body uk-margin-auto-vertical uk-width-small">
+            <div class=dialog-about-header>
+                <span class="dialog-about-icon"><img src="./assets/icon.ico"></span>
+                <span id="dialog-about-title" class="dialog-about-title"></span>
+            </div>
             <div>
-                <a href="https://github.com/bornova/numpad-web" id="openUrl" target="_blank">GitHub</a>
+                <span id="dialog-about-appVersion" class="dialog-about-appVersion"></span>
+                <p>Copyright ©️ 2019 Timur Atalay</p>
             </div>
-            <div>
-                <a href="https://github.com/bornova/numpad-web/blob/master/LICENSE" id="openUrl"
-                    target="_blank">Licence</a>
+            <div uk-grid>
+                <div class="uk-width-3-5">
+                    <div class="dialog-about-links">
+                        <div>
+                            <a href="https://github.com/bornova/numpad" id="openUrl" target="_blank">GitHub</a>
+                        </div>
+                        <div>
+                            <a href="https://github.com/bornova/numpad/blob/master/LICENSE" id="openUrl"
+                                target="_blank">Licence</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="uk-width-2-5">
+                    <p class="uk-text-right">
+                        <button class="uk-button uk-button-default uk-modal-close uk-button-small"
+                            type="button">OK</button>
+                    </p>
+                </div>
             </div>
         </div>
     </div>
 
-    <div id="dialog-help" class="dialog" title="Help">
-        <div class="helpBox">Search: <input id="searchBox" class="textBox" type="text" maxlength="100"
-                placeholder="Start typing to search..."></div>
-        <div id="searchResults">Start typing above to search...</div>
+    <div id="dialog-plot" class="uk-modal-full">
+        <div class="uk-modal-dialog uk-modal-body uk-margin-auto-vertical">
+            <h2 id="plotTitle" class="uk-modal-title"></h2>
+            <div id="plot"></div>
+            <p class="uk-text-right">
+                <button id="plotRangeButton" class="uk-button uk-button-default uk-button-small" type="button">Plot
+                    Settings</button>
+                <button class="uk-button uk-button-default uk-modal-close uk-button-small" type="button">Close</button>
+            </p>
+        </div>
     </div>
 
-    <div id="dialog-showError" class="dialog" title="Error">
-        <span id="errMsg"></span>
+    <div id="dialog-plotRange" class="uk-modal">
+        <div class="uk-modal-dialog uk-modal-body uk-margin-auto-vertical uk-width-small">
+            <h2 class="uk-modal-title">Plot Settings</h2>
+            <div class="uk-grid-small uk-child-width-expand uk-text-center" uk-grid>
+                <div>
+                    <div></div>
+                </div>
+                <div>
+                    <div>Min:</div>
+                </div>
+                <div>
+                    <div>Max:</div>
+                </div>
+            </div>
+
+            <div class="uk-grid-small uk-child-width-expand uk-text-center" uk-grid>
+                <div>
+                    <div class="pr-lh uk-text-right">X-Axis:</div>
+                </div>
+                <div>
+                    <div><input id="xMin" class="uk-input" max="-1"></div>
+                </div>
+                <div>
+                    <div><input id="xMax" class="uk-input" min="1"></div>
+                </div>
+            </div>
+
+            <div class="uk-grid-small uk-child-width-expand uk-text-center" uk-grid>
+                <div>
+                    <div class="pr-lh uk-text-right">Y-Axis:</div>
+                </div>
+                <div>
+                    <div><input id="yMin" class="uk-input" max="-1"></div>
+                </div>
+                <div>
+                    <div><input id="yMax" class="uk-input" min="1"></div>
+                </div>
+            </div>
+
+            <div class="uk-grid-small uk-child-width-expand uk-text-center" uk-grid>
+                <div>
+                    <div class="pr-lh uk-text-right">Step:</div>
+                </div>
+                <div>
+                    <div><input id="step" class="uk-input" min="0.1" step="0.1"></div>
+                </div>
+                <div>
+                    <div></div>
+                </div>
+            </div>
+            <p class="uk-text-right">
+                <button id="set-plotRange" class="uk-button uk-button-default uk-button-small"
+                    type="button">Set</button>
+                <button id="reset-plotRange" class="uk-button uk-button-default uk-button-small"
+                    type="button">Reset</button>
+                <button class="uk-button uk-button-default uk-modal-close uk-button-small" type="button">Cancel</button>
+            </p>
+        </div>
     </div>
 
-    <div id="dialog-confirm" class="dialog">
-        <span id="confirmMsg"></span>
+    <div id="dialog-error" class="uk-modal">
+        <div class="uk-modal-dialog uk-modal-body uk-margin-auto-vertical uk-width-medium">
+            <h2 id="errTitle" class="errTitle uk-modal-title"></h2>
+            <span id="errMsg"></span>
+            <p class="uk-text-right">
+                <button class="uk-button uk-button-default uk-modal-close uk-button-small" type="button">OK</button>
+            </p>
+        </div>
+    </div>
+
+    <div id="dialog-confirm" class="uk-modal">
+        <div class="uk-modal-dialog uk-modal-body uk-margin-auto-vertical uk-width-small">
+            <h2 class="uk-modal-title">Are you sure?</h2>
+            <span id="confirmMsg"></span>
+            <p class="uk-text-right">
+                <button id="confirm-yes" class="uk-button uk-button-default uk-button-small" type="button">Yes</button>
+                <button class="uk-button uk-button-default uk-modal-close uk-button-small" type="button">No</button>
+            </p>
+        </div>
     </div>
 
     <div class="printArea">
         <div class="printHeader">
-            <span class="print-icon"><img src="assets/icon.ico"></span>
-            <span class="print-title"></span>
+            <span class="print-icon"><img src="./assets/icon.ico"></span>
+            <span id="print-title" class="print-title"></span>
         </div>
         <div class="printBoxes">
-            <div id="printLines"></div>
-            <div id="printInput"></div>
-            <div id="printOutput"></div>
+            <div id="printLines" class="printLines"></div>
+            <div id="printInput" class="printInput"></div>
+            <div id="printOutput" class="printOutput"></div>
         </div>
     </div>
 
-    <script src="js/app.js"></script>
-    <script src="js/syncscroll.js"></script>
+    <script src="./js/numpad.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/1.49.5/plotly.min.js"></script>
 </body>
 
 </html>

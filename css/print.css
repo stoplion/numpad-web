@@ -10,7 +10,7 @@
 }
 
 @media print {
-    #wrapper {
+    .wrap {
         display: none;
     }
 
@@ -54,12 +54,12 @@
         margin-right: 15px;
     }
 
-    #printLines {
+    .printLines {
         color: rgb(234, 234, 234);
         text-align: right;
     }
 
-    #printInput {
+    .printInput {
         border-right: 1px solid rgb(234, 234, 234);
         padding-right: 30px;
         margin-right: 15px;
@@ -67,7 +67,7 @@
         min-width: 160px;
     }
 
-    #printOutput {
+    .printOutput {
         color: rgb(84, 130, 53);
         flex: 1;
         min-width: 160px;

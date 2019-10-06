@@ -32,7 +32,6 @@
     var $ = (id) => document.getElementById(id);
 
     // Set headers
-
     $('header-win').remove();
     $('header-mac').style.display = 'block';
     $('header-mac-title').innerHTML = appName;

@@ -6,7 +6,7 @@
 
 (() => {
     const appName = 'Numpad';
-    const appVersion = '4.4.1';
+    const appVersion = '4.4.2';
     const db = {
         defaults: {
             'precision': '4',

@@ -116,8 +116,8 @@
     }
 
     // Calculate answers
+    var solve = math.evaluate;
     function calculate() {
-        var solve = math.evaluate;
         var input = $('input').value;
         var lines = input.split('\n');
         var lineIndex = 1;

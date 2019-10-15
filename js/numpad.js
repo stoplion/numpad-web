@@ -225,7 +225,7 @@
 
         // Solver
         function solver(line, scope) {
-            Object.keys(scope).map(i => line = line !== i ? line.replace(new RegExp('\\b' + i + '\\b'), scope[i]) : line);
+            Object.keys(scope).map(i => line = line.includes(i) ? line.replace(new RegExp('\\b' + i + '\\b'), scope[i]) : line);
 
             var timeReg = 'hour|hours|minute|minutes|second|seconds';
             var dateReg = 'day|days|week|weeks|month|months|year|years|' + timeReg;

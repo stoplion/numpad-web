@@ -125,7 +125,6 @@
         var scrolls = [];
         var answers = [];
         var totals = [];
-        var prints = [];
         var scope = {};
         var expLim = {
             lowerExp: -12,
@@ -185,6 +184,8 @@
                             answer = '<a title="Plot ' + line + '" class="plotButton" data-func="' + line + '" uk-tooltip>Plot</a>';
                             scope.ans = scope['line' + lineNo] = line.split('=')[1].trim();
                         }
+                    } else {
+                        answer = '';
                     }
                 } catch (e) {
                     var errStr = String(e).replace(/'|"/g, '`');
@@ -195,19 +196,14 @@
                 }
             }
 
-            answers.push(answer);
-            lineNos.push(lineNo);
-            scrolls.push(nbsp);
-            prints.push(print);
+            answers += answer + '<br>';
+            lineNos += lineNo + '<br>';
+            scrolls += nbsp + '<br>';
         }
 
-        $('lineNo').innerHTML = lineNos.join('<br>');
-        $('output').innerHTML = answers.join('<br>');
-        $('scroll').innerHTML = scrolls.join('<br>');
-
-        $('printLines').innerHTML = lineNos.join('<br>');
-        $('printInput').innerHTML = prints.join('<br>');
-        $('printOutput').innerHTML = answers.join('<br>');
+        $('lineNo').innerHTML = lineNos;
+        $('output').innerHTML = answers;
+        $('scroll').innerHTML = scrolls;
 
         $('clearButton').className = input === '' ? 'noAction' : 'action';
         $('printButton').className = input === '' ? 'noAction' : 'action';
@@ -331,7 +327,12 @@
                     break;
                 case 'printButton': // Print calculations
                     UIkit.tooltip('#printButton').hide();
-                    if ($('input').value != '') window.print();
+                    if ($('input').value != '') {
+                        $('printLines').innerHTML = $('lineNo').innerHTML;
+                        $('printInput').innerHTML = $('input').value;
+                        $('printOutput').innerHTML = $('output').innerHTML;
+                        window.print();
+                    }
                     break;
                 case 'saveButton': // Save calcualtions
                     if ($('input').value !== '') {

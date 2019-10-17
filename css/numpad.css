@@ -59,7 +59,7 @@ textarea {
 
 .header-win-icon {
     float: left;
-    margin: 5px 0 0 10px;
+    margin: 3px 0 0 10px;
 }
 
 .header-win-icon img {
@@ -135,15 +135,7 @@ textarea {
 
 .header-mac-title {
     text-align: center;
-    font-family: 'Helvetica Neue';
-    font-size: 13px;
-    font-weight: 500;
-    padding-top: 10px;
-    color: #333333;
-}
-
-.header-web-title {
-    text-align: center;
+    font-family: 'Open Sans', 'Helvetica Neue';
     font-size: 12px;
     font-weight: 600;
     padding-top: 10px;
@@ -151,7 +143,7 @@ textarea {
 }
 
 /* Content */
-.wrap {
+.wrapper {
     height: 100%;
     visibility: hidden;
 }
@@ -356,7 +348,7 @@ textarea {
 
 #helpButton {
     mask: var(--helpButton);
-    -webkit-mask: var(--helpButton); 
+    -webkit-mask: var(--helpButton);
 }
 
 #aboutButton {
@@ -364,11 +356,16 @@ textarea {
     -webkit-mask: var(--aboutButton);
 }
 
+/* Dialogs */
 .dialogs {
     display: none;
 }
 
-/* Saved dialog Items */
+.dialog-buttons {
+    display: block;
+    margin-top:20px;
+}
+
 .dialog-open-wrapper {
     position: relative;
     background: rgba(244, 244, 244, 0.3);
@@ -456,6 +453,10 @@ textarea {
     text-align: center;
 }
 
+.dialog-about-copyright {
+    display: block;
+}
+
 .dialog-open-wrapper:hover {
     background: #f4f4f4;
 }
@@ -505,20 +506,14 @@ textarea {
 .precision {
     width: 24px !important;
     text-align: center !important;
-    padding: 0 !important;
+    padding: 1px 0 0 0 !important;
     background: transparent !important;
     border: 1px solid #e5e5e5 !important;
     color: #333333 !important;
-    height: 1.5em;
 }
 
 .range {
     padding-left: 10px !important;
-}
-
-.spacer {
-    display: block;
-    height: 20px;
 }
 
 .pr-lh {

@@ -65,6 +65,14 @@ h2 {
     background: #f5f5f5 !important;
 }
 
+.uk-button-default:hover {
+    border-color: #c4c4c4 !important;
+}
+
+.uk-button-default:active {
+    background: #eeeeee !important;
+}
+
 .uk-button-danger {
     background-color: rgb(214, 49, 49, 0.65);
 }

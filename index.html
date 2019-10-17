@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html>
 
 <head>
@@ -8,7 +9,7 @@
 </head>
 
 <body>
-    <div id="wrapper" class="wrap">
+    <div id="wrapper" class="wrapper">
         <div id="header-win" class="header-win">
             <div class="header-win-icon"><img src="./assets/icon.ico"></div>
             <div id="header-win-title" class="header-win-title"></div>
@@ -21,7 +22,7 @@
         </div>
 
         <div id="header-mac" class="header-mac">
-            <div id="header-mac-title" class="header-web-title"></div>
+            <div id="header-mac-title" class="header-mac-title"></div>
         </div>
 
         <div id="content" class="content">
@@ -48,7 +49,7 @@
             <div id="rightActions" class="rightActions">
                 <a id="settingsButton" class="action" title="Settings" uk-tooltip></a>
                 <a id="helpButton" class="action" title="Help" uk-tooltip></a>
-                <a id="aboutButton" class="action" title="About" uk-tooltip></a>
+                <a id="aboutButton" class="action" title="Info" uk-tooltip></a>
             </div>
         </div>
     </div>
@@ -57,11 +58,10 @@
         <div class="uk-modal-dialog uk-modal-body uk-margin-auto-vertical uk-width-small">
             <h2 class="uk-modal-title">Save Calculation</h2>
             <input id="saveTitle" class="textBox" type="text" maxlength="20" placeholder="Title (Optional)">
-            <p class="uk-text-right">
-                <button id="dialog-save-save" class="uk-button uk-button-default uk-button-small"
-                    type="button">Save</button>
-                <button class="uk-button uk-button-default uk-modal-close uk-button-small" type="button">Cancel</button>
-            </p>
+            <div class="dialog-buttons uk-text-right">
+                <button id="dialog-save-save" class="uk-button uk-button-default uk-button-small">Save</button>
+                <button class="uk-button uk-button-default uk-modal-close uk-button-small">Cancel</button>
+            </div>
         </div>
     </div>
 
@@ -69,11 +69,10 @@
         <div class="uk-modal-dialog uk-modal-body uk-margin-auto-vertical uk-width-medium">
             <h2 class="uk-modal-title">Open Calculation</h2>
             <div id="dialog-open-body" class="dialog-open-body uk-overflow-auto"></div>
-            <p class="uk-text-right">
-                <button id="dialog-open-deleteAll" class="uk-button uk-button-danger uk-button-small"
-                    type="button">Delete All</button>
-                <button class="uk-button uk-button-default uk-modal-close uk-button-small" type="button">Cancel</button>
-            </p>
+            <div class="dialog-buttons uk-text-right">
+                <button id="dialog-open-deleteAll" class="uk-button uk-button-danger uk-button-small">Delete All</button>
+                <button class="uk-button uk-button-default uk-modal-close uk-button-small">Cancel</button>
+            </div>
         </div>
     </div>
 
@@ -89,8 +88,7 @@
                                 <span id="precision-label" class="uk-label precision">1</span>
                             </div>
                             <div class="uk-text-right range uk-width-3-5">
-                                <input id="precisionRange" class="uk-range" name="value" type="range" min="0" max="16"
-                                    step="1">
+                                <input id="precisionRange" class="uk-range" name="value" type="range" min="0" max="16" step="1">
                             </div>
                         </div>
                     </div>
@@ -141,23 +139,14 @@
                     </div>
                 </div>
             </div>
-            <div class="spacer"></div>
             <div uk-grid>
-                <div class="uk-width-1-4">
-                    <p class="uk-text-left">
-                        <button id="dialog-settings-reset" class="uk-button uk-button-danger uk-button-small"
-                            type="button">Reset</button>
-                    </p>
+                <div class="dialog-buttons uk-width-1-4 uk-text-left">
+                    <button id="dialog-settings-reset" class="uk-button uk-button-danger uk-button-small">Reset</button>
                 </div>
-                <div class="uk-width-3-4">
-                    <p class="uk-text-right">
-                        <button id="dialog-settings-save" class="uk-button uk-button-default uk-button-small"
-                            type="button">Save</button>
-                        <button id="dialog-settings-defaults" class="uk-button uk-button-default uk-button-small"
-                            type="button">Defaults</button>
-                        <button class="uk-button uk-button-default uk-modal-close uk-button-small"
-                            type="button">Cancel</button>
-                    </p>
+                <div class="dialog-buttons uk-width-3-4 uk-text-right">
+                    <button id="dialog-settings-save" class="uk-button uk-button-default uk-button-small">Save</button>
+                    <button id="dialog-settings-defaults" class="uk-button uk-button-default uk-button-small">Defaults</button>
+                    <button class="uk-button uk-button-default uk-modal-close uk-button-small">Cancel</button>
                 </div>
             </div>
         </div>
@@ -166,12 +155,11 @@
     <div id="dialog-help" class="uk-modal">
         <div class="uk-modal-dialog uk-modal-body uk-margin-auto-vertical">
             <h2 class="uk-modal-title">Help</h2>
-            <div class="helpBox"><input id="searchBox" class="textBox" type="text" maxlength="100"
-                    placeholder="Start typing to search..."></div>
+            <div class="helpBox"><input id="searchBox" class="textBox" type="text" maxlength="100" placeholder="Start typing to search..."></div>
             <div id="searchResults" class="searchResults">Start typing above to search...</div>
-            <p class="uk-text-right">
-                <button class="uk-button uk-button-default uk-modal-close uk-button-small" type="button">OK</button>
-            </p>
+            <div class="dialog-buttons uk-text-right">
+                <button class="uk-button uk-button-default uk-modal-close uk-button-small">OK</button>
+            </div>
         </div>
     </div>
 
@@ -183,39 +171,34 @@
             </div>
             <div>
                 <span id="dialog-about-appVersion" class="dialog-about-appVersion"></span>
-                <p>Copyright ©️ 2019 Timur Atalay</p>
+                <span class="dialog-about-copyright">Copyright ©️ 2019 Timur Atalay</span>
             </div>
             <div uk-grid>
-                <div class="uk-width-3-5">
+                <div class="dialog-buttons uk-width-3-5">
                     <div class="dialog-about-links">
                         <div>
                             <a href="https://github.com/bornova/numpad" id="openUrl" target="_blank">GitHub</a>
                         </div>
                         <div>
-                            <a href="https://github.com/bornova/numpad/blob/master/LICENSE" id="openUrl"
-                                target="_blank">Licence</a>
+                            <a href="https://github.com/bornova/numpad/blob/master/LICENSE" id="openUrl" target="_blank">Licence</a>
                         </div>
                     </div>
                 </div>
-                <div class="uk-width-2-5">
-                    <p class="uk-text-right">
-                        <button class="uk-button uk-button-default uk-modal-close uk-button-small"
-                            type="button">OK</button>
-                    </p>
+                <div class="dialog-buttons uk-width-2-5 uk-text-right">
+                    <button class="uk-button uk-button-default uk-modal-close uk-button-small">OK</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <div id="dialog-plot" class="uk-modal-full">
+    <div id="dialog-plot" class="uk-modal uk-modal-full">
         <div class="uk-modal-dialog uk-modal-body uk-margin-auto-vertical">
             <h2 id="plotTitle" class="uk-modal-title"></h2>
             <div id="plot"></div>
-            <p class="uk-text-right">
-                <button id="plotRangeButton" class="uk-button uk-button-default uk-button-small" type="button">Plot
-                    Settings</button>
-                <button class="uk-button uk-button-default uk-modal-close uk-button-small" type="button">Close</button>
-            </p>
+            <div class="dialog-buttons uk-text-right">
+                <button id="plotRangeButton" class="uk-button uk-button-default uk-button-small">Plot Settings</button>
+                <button class="uk-button uk-button-default uk-modal-close uk-button-small">Close</button>
+            </div>
         </div>
     </div>
 
@@ -269,13 +252,11 @@
                     <div></div>
                 </div>
             </div>
-            <p class="uk-text-right">
-                <button id="set-plotRange" class="uk-button uk-button-default uk-button-small"
-                    type="button">Set</button>
-                <button id="reset-plotRange" class="uk-button uk-button-default uk-button-small"
-                    type="button">Reset</button>
-                <button class="uk-button uk-button-default uk-modal-close uk-button-small" type="button">Cancel</button>
-            </p>
+            <div class="dialog-buttons uk-text-right">
+                <button id="set-plotRange" class="uk-button uk-button-default uk-button-small">Set</button>
+                <button id="reset-plotRange" class="uk-button uk-button-default uk-button-small">Reset</button>
+                <button class="uk-button uk-button-default uk-modal-close uk-button-small">Cancel</button>
+            </div>
         </div>
     </div>
 
@@ -283,9 +264,9 @@
         <div class="uk-modal-dialog uk-modal-body uk-margin-auto-vertical uk-width-large">
             <h2 id="errTitle" class="errTitle uk-modal-title"></h2>
             <span id="errMsg"></span>
-            <p class="uk-text-right">
-                <button class="uk-button uk-button-default uk-modal-close uk-button-small" type="button">OK</button>
-            </p>
+            <div class="dialog-buttons uk-text-right">
+                <button class="uk-button uk-button-default uk-modal-close uk-button-small">OK</button>
+            </div>
         </div>
     </div>
 
@@ -293,10 +274,10 @@
         <div class="uk-modal-dialog uk-modal-body uk-margin-auto-vertical uk-width-small">
             <h2 class="uk-modal-title">Are you sure?</h2>
             <span id="confirmMsg"></span>
-            <p class="uk-text-right">
-                <button id="confirm-yes" class="uk-button uk-button-default uk-button-small" type="button">Yes</button>
-                <button class="uk-button uk-button-default uk-modal-close uk-button-small" type="button">No</button>
-            </p>
+            <div class="dialog-buttons uk-text-right">
+                <button id="confirm-yes" class="uk-button uk-button-default uk-button-small">Yes</button>
+                <button class="uk-button uk-button-default uk-modal-close uk-button-small">No</button>
+            </div>
         </div>
     </div>
 

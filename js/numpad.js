@@ -4,42 +4,189 @@
  * @license MIT https://github.com/bornova/numpad/blob/master/LICENSE
  */
 
+// Get element by id
+const $ = (id) => document.getElementById(id);
+
+// localStorage
+const db = {
+    get: (key) => JSON.parse(localStorage.getItem(key)),
+    set: (key, value) => localStorage.setItem(key, JSON.stringify(value))
+};
+
+// App Settings
+const appDefaults = {
+    'precision': '4',
+    'dateFormat': 'l',
+    'inputWidth': '50%',
+    'autoRates': true,
+    'resizable': true,
+    'lineErrors': true,
+    'lineNumbers': true,
+    'plotRange': {
+        'xMin': -10,
+        'xMax': 10,
+        'yMin': -10,
+        'yMax': 10,
+        'step': 0.5
+    }
+};
+
+const appSettings = () => db.get('settings') || (db.set('settings', appDefaults), appDefaults);
+
 (() => {
     const appName = 'Numpad';
-    const appVersion = '4.6.0';
-    const db = {
-        defaults: {
-            'precision': '4',
-            'dateFormat': 'l',
-            'inputWidth': '50%',
-            'autoRates': true,
-            'resizable': true,
-            'lineErrors': true,
-            'lineNumbers': true,
-            'plotRange': {
-                'xMin': -10,
-                'xMax': 10,
-                'yMin': -10,
-                'yMax': 10,
-                'step': 0.5
+    const appVersion = '4.7.6';
+
+    const calculate = () => {
+        var settings = appSettings();
+        var solve = math.evaluate;
+        var input = $('input').value;
+        var lines = input.split('\n');
+        var lineIndex = 1;
+        var lineNos = [];
+        var scrolls = [];
+        var answers = [];
+        var totals = [];
+        var scope = {};
+        var expLim = {
+            lowerExp: -12,
+            upperExp: 12
+        };
+        var digits = {
+            maximumFractionDigits: settings.precision
+        };
+
+        scope.now = moment().format(settings.dateFormat + ' LT');
+        scope.today = moment().format(settings.dateFormat);
+
+        for (var i in lines) {
+            var line = lines[i].trim();
+            var lineNo = lineIndex++;
+            var answer = '';
+
+            if (line) {
+                try {
+                    line = lineNo > 1 && line.charAt(0).match(/[\+\-\*\/]/) && lines[i - 1].length > 0 ? scope.ans + line : line;
+                    try {
+                        answer = solve(line, scope);
+                    } catch (e) {
+                        while (line.match(/\([^\)]+\)/)) {
+                            var s = line.substring(line.lastIndexOf('(') + 1);
+                            var sp = line.substring(line.lastIndexOf('('));
+
+                            s = s.substring(0, s.indexOf(')'));
+                            sp = sp.substring(0, sp.indexOf(')') + 1);
+
+                            if (sp.length === 0) break;
+
+                            try {
+                                line = line.replace(sp, solver(s));
+                            } catch (e) {
+                                break;
+                            }
+                        }
+                        answer = solver(line);
+                    }
+
+                    if (answer !== undefined) {
+                        scope.ans = scope['line' + lineNo] = answer;
+                        answer = math.format(answer, expLim);
+
+                        var a = answer.trim().split(' ')[0];
+                        var b = answer.replace(a, '');
+                        answer = !a.includes('e') && !isNaN(a) ? Number(a).toLocaleString(undefined, digits) + b : strip(answer);
+
+                        if (!isNaN(a)) totals.push(Number(a));
+
+                        scope.total = totals.reduce((a, b) => a + b, 0);
+
+                        if (answer.match(/\w\(x\)/)) {
+                            answer = '<a title="Plot ' + line + '" class="plotButton" data-func="' + line + '" uk-tooltip>Plot</a>';
+                            scope.ans = scope['line' + lineNo] = line.split('=')[1].trim();
+                        }
+                    } else {
+                        answer = '';
+                    }
+                } catch (e) {
+                    var errStr = String(e).replace(/'|"/g, '`');
+                    if (settings.lineErrors) {
+                        answer = '<a title="' + errStr + '" class="lineError" data-line="' + lineNo + '" data-error="' + errStr + '" uk-tooltip>err</a>';
+                        lineNo = '<span class="lineErrorNo">' + lineNo + '</span>';
+                    }
+                }
             }
-        },
-        get: (key) => JSON.parse(localStorage.getItem(key)),
-        set: (key, value) => localStorage.setItem(key, JSON.stringify(value))
+
+            answers += answer + '<br>';
+            lineNos += lineNo + '<br>';
+            scrolls += '<br>';
+        }
+
+        $('lineNo').innerHTML = lineNos;
+        $('output').innerHTML = answers;
+        $('scroll').innerHTML = scrolls;
+
+        $('clearButton').className = input === '' ? 'noAction' : 'action';
+        $('printButton').className = input === '' ? 'noAction' : 'action';
+        $('saveButton').className = input === '' ? 'noAction' : 'action';
+
+        db.set('input', $('input').value);
+        $('undoButton').style.visibility = 'hidden';
+
+        function strip(s) {
+            var t = s.length;
+            if (s.charAt(0) === '"') s = s.substring(1, t--);
+            if (s.charAt(--t) === '"') s = s.substring(0, t);
+            return s;
+        }
+
+        // Solver
+        function solver(line) {
+            Object.keys(scope).map(i => line = line.includes(i) ? line.replace(new RegExp('\\b' + i + '\\b'), scope[i]) : line);
+
+            var timeReg = 'hour|hours|minute|minutes|second|seconds';
+            var dateReg = 'day|days|week|weeks|month|months|year|years|' + timeReg;
+            var momentReg = new RegExp('[\\+\\-]\\s*\\d*\\s*(' + dateReg + ')\\s*$');
+
+            if (line.match(momentReg)) {
+                var lineDate = line.split(/[\+\-]/)[0];
+                var rightOfDate = String(solve(line.replace(lineDate, ''), scope));
+                var dwmy = rightOfDate.match(new RegExp(dateReg));
+                var dateNum = rightOfDate.split(dwmy)[0];
+                var timeFormat = line.match(new RegExp(timeReg)) ? settings.dateFormat + ' LT' : settings.dateFormat;
+
+                line = '"' + moment(new Date(lineDate)).add(dateNum, dwmy).format(timeFormat) + '"';
+            }
+
+            var modReg = /\d*\.?\d%\d*\.?\d/g;
+            var pcntReg = /[\w.]*%/g;
+            var pcntOfReg = /%[ ]*of[ ]*/g;
+            var pcntOfRegC = /[\w.]*%[ ]*of[ ]*/g;
+
+            line = line.match(pcntOfRegC) ? line.replace(pcntOfReg, '/100*') : line;
+
+            if (line.match(modReg)) line.match(modReg).map(m => line = line.replace(m, solve(m, scope)));
+
+            while (line.match(pcntReg) && !line.match(modReg)) {
+                var right = line.match(pcntReg)[0];
+                var rightVal = solve(right.slice(0, -1), scope);
+                var left = line.split(right)[0];
+                var leftVal = solve(left.trim().slice(0, -1), scope);
+
+                newval = solve(leftVal + '*' + rightVal + '/100', scope);
+                line = line.replace(left + right, solve(left + newval, scope));
+            }
+
+            return solve(line, scope);
+        }
     };
 
-    // Get element by id
-    var $ = (id) => document.getElementById(id);
+    var settings;
 
     // Set headers
-
     $('header-mac').style.display = 'block';
     $('header-mac-title').innerHTML = appName;
-    $('print-title').innerHTML = appName;
 
-    // Load last calculations and calculate on input change
-    $('input').addEventListener('input', calculate);
-
+    // Load last calculations
     // Default content if first visit
     if (!db.get('firstTime')) {
         $('input').value = (
@@ -95,11 +242,10 @@
     }
 
     // Apply settings
-    var settings;
     applySettings();
 
     function applySettings() {
-        settings = db.get('settings') || (db.set('settings', db.defaults), db.defaults);
+        settings = appSettings();
         $('lineNo').style.display = settings.lineNumbers ? 'block' : 'none';
         $('handle').style.display = settings.resizable ? 'block' : 'none';
         $('inputCol').style.width = settings.resizable ? settings.inputWidth : '50%';
@@ -108,159 +254,11 @@
 
         $("wrapper").style.visibility = 'visible';
         calculate();
-
-        $('printLines').style.display = settings.lineNumbers ? 'block' : 'none';
-        $('printInput').style.width = settings.resizable ? settings.inputWidth : '50%';
-        $('printInput').style.marginLeft = settings.lineNumbers ? '0px' : '18px';
-        $('printOutput').style.textAlign = settings.resizable ? 'left' : 'right';
-    }
-
-    // Calculate answers
-    function calculate() {
-        var solve = math.evaluate;
-        var input = $('input').value;
-        var lines = input.split('\n');
-        var lineIndex = 1;
-        var lineNos = [];
-        var scrolls = [];
-        var answers = [];
-        var totals = [];
-        var scope = {};
-        var expLim = {
-            lowerExp: -12,
-            upperExp: 12
-        };
-        var digits = {
-            maximumFractionDigits: settings.precision
-        };
-
-        scope.now = moment().format(settings.dateFormat + ' LT');
-        scope.today = moment().format(settings.dateFormat);
-
-        for (var i in lines) {
-            var line = lines[i].trim();
-            var lineNo = lineIndex++;
-            var print = line;
-            var nbsp = '&zwnj;';
-            var answer = nbsp;
-
-            if (line) {
-                try {
-                    line = lineNo > 1 && line.charAt(0).match(/[\+\-\*\/]/) && lines[i - 1].length > 0 ? scope.ans + line : line;
-                    try {
-                        answer = solve(line, scope);
-                    } catch (e) {
-                        while (line.match(/\([^\)]+\)/)) {
-                            var s = line.substring(line.lastIndexOf('(') + 1);
-                            var sp = line.substring(line.lastIndexOf('('));
-
-                            s = s.substring(0, s.indexOf(')'));
-                            sp = sp.substring(0, sp.indexOf(')') + 1);
-
-                            if (sp.length === 0) break;
-
-                            try {
-                                line = line.replace(sp, solver(s, scope));
-                            } catch (e) {
-                                break;
-                            }
-                        }
-                        answer = solver(line, scope);
-                    }
-
-                    if (answer !== undefined) {
-                        scope.ans = scope['line' + lineNo] = answer;
-                        answer = math.format(answer, expLim);
-
-                        var a = answer.trim().split(' ')[0];
-                        var b = answer.replace(a, '');
-                        answer = !a.includes('e') && !isNaN(a) ? Number(a).toLocaleString(undefined, digits) + b : strip(answer);
-
-                        if (!isNaN(a)) totals.push(Number(a));
-
-                        scope.total = totals.reduce((a, b) => a + b, 0);
-
-                        if (answer.match(/\w\(x\)/)) {
-                            answer = '<a title="Plot ' + line + '" class="plotButton" data-func="' + line + '" uk-tooltip>Plot</a>';
-                            scope.ans = scope['line' + lineNo] = line.split('=')[1].trim();
-                        }
-                    } else {
-                        answer = '';
-                    }
-                } catch (e) {
-                    var errStr = String(e).replace(/'|"/g, '`');
-                    if (settings.lineErrors) {
-                        answer = '<a title="' + errStr + '" class="lineError" data-line="' + lineNo + '" data-error="' + errStr + '" uk-tooltip>err</a>';
-                        lineNo = '<span class="lineErrorNo">' + lineNo + '</span>';
-                    }
-                }
-            }
-
-            answers += answer + '<br>';
-            lineNos += lineNo + '<br>';
-            scrolls += nbsp + '<br>';
-        }
-
-        $('lineNo').innerHTML = lineNos;
-        $('output').innerHTML = answers;
-        $('scroll').innerHTML = scrolls;
-
-        $('clearButton').className = input === '' ? 'noAction' : 'action';
-        $('printButton').className = input === '' ? 'noAction' : 'action';
-        $('saveButton').className = input === '' ? 'noAction' : 'action';
-
-        db.set('input', $('input').value);
-        $('undoButton').style.visibility = 'hidden';
-
-        function strip(s) {
-            var t = s.length;
-            if (s.charAt(0) === '"') s = s.substring(1, t--);
-            if (s.charAt(--t) === '"') s = s.substring(0, t);
-            return s;
-        }
-
-        // Solver
-        function solver(line, scope) {
-            Object.keys(scope).map(i => line = line.includes(i) ? line.replace(new RegExp('\\b' + i + '\\b'), scope[i]) : line);
-
-            var timeReg = 'hour|hours|minute|minutes|second|seconds';
-            var dateReg = 'day|days|week|weeks|month|months|year|years|' + timeReg;
-            var momentReg = new RegExp('[\\+\\-]\\s*\\d*\\s*(' + dateReg + ')\\s*$');
-
-            if (line.match(momentReg)) {
-                var lineDate = line.split(/[\+\-]/)[0];
-                var rightOfDate = String(solve(line.replace(lineDate, ''), scope));
-                var dwmy = rightOfDate.match(new RegExp(dateReg));
-                var dateNum = rightOfDate.split(dwmy)[0];
-                var timeFormat = line.match(new RegExp(timeReg)) ? settings.dateFormat + ' LT' : settings.dateFormat;
-
-                line = '"' + moment(new Date(lineDate)).add(dateNum, dwmy).format(timeFormat) + '"';
-            }
-
-            var modReg = /\d*\.?\d%\d*\.?\d/g;
-            var pcntReg = /[\w.]*%/g;
-            var pcntOfReg = /%[ ]*of[ ]*/g;
-            var pcntOfRegC = /[\w.]*%[ ]*of[ ]*/g;
-
-            line = line.match(pcntOfRegC) ? line.replace(pcntOfReg, '/100*') : line;
-
-            if (line.match(modReg)) line.match(modReg).forEach(m => line = line.replace(m, solve(m, scope)));
-
-            while (line.match(pcntReg) && !line.match(modReg)) {
-                var right = line.match(pcntReg)[0];
-                var rightVal = solve(right.slice(0, -1), scope);
-                var left = line.split(right)[0];
-                var leftVal = solve(left.trim().slice(0, -1), scope);
-
-                newval = solve(leftVal + '*' + rightVal + '/100', scope);
-                line = line.replace(left + right, solve(left + newval, scope));
-            }
-
-            return solve(line, scope);
-        }
     }
 
     document.addEventListener("DOMContentLoaded", () => {
+        $('input').addEventListener('input', calculate);
+
         // Panel resizer
         var handle = document.querySelector('.handle');
         var panel = handle.closest('.content');
@@ -306,7 +304,7 @@
 
         function createRateUnits() {
             var data = db.get('rates');
-            Object.keys(data).forEach(currency => math.createUnit(data[currency].code, math.unit(data[currency].inverseRate, 'USD'), {
+            Object.keys(data).map(currency => math.createUnit(data[currency].code, math.unit(data[currency].inverseRate, 'USD'), {
                 override: true
             }));
             calculate();
@@ -328,10 +326,18 @@
                 case 'printButton': // Print calculations
                     UIkit.tooltip('#printButton').hide();
                     if ($('input').value != '') {
+                        $('printLines').style.display = settings.lineNumbers ? 'block' : 'none';
+                        $('printInput').style.width = settings.resizable ? settings.inputWidth : '50%';
+                        $('printInput').style.marginLeft = settings.lineNumbers ? '0px' : '18px';
+                        $('printInput').style.borderRightWidth = settings.resizable ? '1px' : '0';
+                        $('printOutput').style.textAlign = settings.resizable ? 'left' : 'right';
+
+                        $('print-title').innerHTML = appName;
                         $('printLines').innerHTML = $('lineNo').innerHTML;
                         $('printInput').innerHTML = $('input').value;
                         $('printOutput').innerHTML = $('output').innerHTML;
-                        window.print();
+                        ipcRenderer.once('actionReply', (event, response) => showMsg(response));
+                        ipcRenderer.send('print');
                     }
                     break;
                 case 'saveButton': // Save calcualtions
@@ -422,7 +428,7 @@
                     break;
                 case 'dialog-settings-defaults': // Revert back to default settings
                     confirm('All settings will revert back to defaults.', () => {
-                        db.set('settings', db.defaults);
+                        db.set('settings', appDefaults);
                         applySettings();
                         showMsg('Default settings applied');
                         UIkit.modal('#dialog-settings').hide();
@@ -443,7 +449,7 @@
                 case 'set-plotRange': // Save plot range settings
                     var allValid = true;
                     var plotRange = settings.plotRange;
-                    Object.keys(plotRange).forEach(key => {
+                    Object.keys(plotRange).map(key => {
                         var val = $(key).value;
                         var min = $(key).getAttribute('min') || -1000000;
                         var max = $(key).getAttribute('max') || 1000000;
@@ -469,19 +475,17 @@
                 case 'reset-plotRange': // Reset plot range
                     confirm('Reset plot range to defaults?', () => {
                         var plotRange = settings.plotRange;
-                        Object.keys(settings.plotRange).forEach(key => plotRange[key] = db.defaults.plotRange[key]);
+                        Object.keys(settings.plotRange).map(key => plotRange[key] = appDefaults.plotRange[key]);
                         db.set('settings', settings);
                         UIkit.modal('#dialog-plotRange').hide();
                         plot();
                     });
                     break;
-                case 'confirm-yes': // Confirmation dialog yes button action
-                    yesAction();
-                    UIkit.modal('#dialog-confirm').hide();
-                    break;
             }
+        });
 
-            // Open saved calculations dialog actions
+        // Open saved calculations dialog actions
+        $('dialog-open').addEventListener('click', (e) => {
             var pid;
             var saved = db.get('saved');
             if (e.target.parentNode.getAttribute('data-action') == 'load') {
@@ -511,7 +515,7 @@
             $('dialog-open-body').innerHTML = '';
             if (savedItems.length > 0) {
                 $('dialog-open-deleteAll').disabled = false;
-                savedItems.forEach(id => {
+                savedItems.map(id => {
                     $('dialog-open-body').innerHTML +=
                         '<div class="dialog-open-wrapper" id="' + id + '">' +
                         '<div data-action="load">' +
@@ -579,7 +583,7 @@
         // Initiate plot range dialog
         UIkit.util.on('#dialog-plotRange', 'beforeshow', () => {
             var plotRange = settings.plotRange;
-            Object.keys(plotRange).forEach(key => {
+            Object.keys(plotRange).map(key => {
                 $(key).style.backgroundColor = 'transparent';
                 $(key).value = plotRange[key];
             });
@@ -635,7 +639,7 @@
 
         // Relayout plot on window resize
         window.addEventListener('resize', () => {
-            if ($('dialog-plot').classList.contains('uk-modal')) {
+            if ($('dialog-plot').classList.contains('uk-open')) {
                 var h = window.innerHeight;
                 var w = window.innerWidth;
                 Plotly.relayout('plot', {
@@ -646,12 +650,16 @@
         });
 
         // Show confirmation dialog
-        var yesAction;
-
         function confirm(msg, action) {
-            yesAction = action;
             UIkit.util.on("#dialog-confirm", 'beforeshow', () => $('confirmMsg').innerHTML = msg);
             UIkit.modal('#dialog-confirm').show();
+            var yesAction = (e) => {
+                action();
+                e.stopPropagation();
+                UIkit.modal('#dialog-confirm').hide();
+                $('confirm-yes').removeEventListener('click', yesAction);
+            };
+            $('confirm-yes').addEventListener('click', yesAction);
         }
 
         // Show error dialog

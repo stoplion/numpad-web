@@ -35,7 +35,7 @@ const appSettings = () => db.get('settings') || (db.set('settings', appDefaults)
 
 (() => {
     const appName = 'Numpad';
-    const appVersion = '4.7.6';
+    const appVersion = '4.7.7';
 
     const calculate = () => {
         var settings = appSettings();

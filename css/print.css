@@ -10,7 +10,7 @@
 }
 
 @media print {
-    .wrap {
+    .wrapper {
         display: none;
     }
 

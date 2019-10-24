@@ -35,7 +35,7 @@ const appSettings = () => db.get('settings') || (db.set('settings', appDefaults)
 
 (() => {
     const appName = 'Numpad';
-    const appVersion = '4.7.7';
+    const appVersion = '1.0.2';
 
     const calculate = () => {
         var settings = appSettings();
@@ -141,7 +141,12 @@ const appSettings = () => db.get('settings') || (db.set('settings', appDefaults)
 
         // Solver
         function solver(line) {
-            Object.keys(scope).map(i => line = line.includes(i) ? line.replace(new RegExp('\\b' + i + '\\b'), scope[i]) : line);
+            line = line.replace(/\bans\b/g, scope.ans);
+            line = line.replace(/\bnow\b/g, scope.now);
+            line = line.replace(/\btoday\b/g, scope.today);
+
+            var lineNoReg = line.match(/\bline\d+\b/g);
+            if (lineNoReg) lineNoReg.map(n => line = line.replace(n, scope[n]));
 
             var timeReg = 'hour|hours|minute|minutes|second|seconds';
             var dateReg = 'day|days|week|weeks|month|months|year|years|' + timeReg;

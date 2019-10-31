@@ -295,7 +295,10 @@ const appSettings = () => db.get('settings') || (db.set('settings', appDefaults)
                     });
                     break;
                 case 'dialog-settings-reset': // Reset app
-                    confirm('All user settings and data will be lost.', () => ipc.send('resetApp'));
+                    confirm('All user settings and data will be lost.', () => {
+                        localStorage.clear();
+                        location.reload();
+                    });
                     break;
                 case 'updateRatesButton': // Update exchange rates
                     getRates();

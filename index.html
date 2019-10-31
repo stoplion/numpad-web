@@ -26,13 +26,13 @@
         </div>
 
         <div id="content" class="content">
-            <div id="lineNo" class="lineNo syncscroll" name="col"></div>
-            <div id="inputCol" class="inputCol resize">
-                <textarea id="input" class="input syncscroll mousetrap" name="col" wrap="off"></textarea>
+            <div id="lineNo" class="lineNo syncscroll" name="sync"></div>
+            <div id="inputPane" class="inputPane resize">
+                <textarea id="input" class="input syncscroll mousetrap" name="sync" wrap="off"></textarea>
             </div>
             <div id="handle" class="handle"></div>
-            <div id="output" class="output syncscroll" name="col"></div>
-            <div id="scroll" class="scroll syncscroll" name="col"></div>
+            <div id="output" class="output syncscroll" name="sync"></div>
+            <div id="scroll" class="scroll syncscroll" name="sync"></div>
         </div>
 
         <div id="actions" class="actions">
@@ -57,7 +57,7 @@
     <div id="dialog-save" class="uk-modal">
         <div class="uk-modal-dialog uk-modal-body uk-margin-auto-vertical uk-width-small">
             <h2 class="uk-modal-title">Save Calculation</h2>
-            <input id="saveTitle" class="textBox" type="text" maxlength="20" placeholder="Title (Optional)">
+            <div><input id="saveTitle" class="textBox" type="text" maxlength="20" placeholder="Title (Optional)"></div>
             <div class="dialog-buttons uk-text-right">
                 <button id="dialog-save-save" class="uk-button uk-button-default uk-button-small">Save</button>
                 <button class="uk-button uk-button-default uk-modal-close uk-button-small">Cancel</button>
@@ -88,7 +88,7 @@
                                 <span id="precision-label" class="uk-label precision">1</span>
                             </div>
                             <div class="uk-text-right range uk-width-3-5">
-                                <input id="precisionRange" class="uk-range" name="value" type="range" min="0" max="16" step="1">
+                                <input id="precisionRange" class="uk-range" type="range" min="0" max="16" step="1">
                             </div>
                         </div>
                     </div>
@@ -128,8 +128,7 @@
                 </div>
                 <div class="uk-child-width-expand" uk-grid>
                     <div class="uk-width-4-5">
-                        Update exchange rates on start
-                        <a id="updateRatesButton" class="updateRatesLink">Update</a>
+                        Update exchange rates on start <a id="updateRatesButton" class="updateRatesLink">Update Now</a>
                     </div>
                     <div class="uk-text-right uk-width-1-5">
                         <label class="switch">
@@ -177,10 +176,10 @@
                 <div class="dialog-buttons uk-width-3-5">
                     <div class="dialog-about-links">
                         <div>
-                            <a href="https://github.com/bornova/numpad" id="openUrl" target="_blank" rel="noreferrer">GitHub</a>
+                            <a href="https://github.com/bornova/numpad" id="openUrl" target="_blank">GitHub</a>
                         </div>
                         <div>
-                            <a href="https://github.com/bornova/numpad/blob/master/LICENSE" id="openUrl" target="_blank" rel="noreferrer">Licence</a>
+                            <a href="https://github.com/bornova/numpad/blob/master/LICENSE" id="openUrl" target="_blank">Licence</a>
                         </div>
                     </div>
                 </div>
@@ -296,6 +295,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.2.0/js/uikit.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/6.2.2/math.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+    <script src="./js/calculate.js"></script>
     <script src="./js/numpad.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/1.49.5/plotly-basic.min.js"></script>
 </body>

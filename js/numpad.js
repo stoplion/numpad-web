@@ -98,9 +98,6 @@ const appSettings = () => db.get('settings') || (db.set('settings', appDefaults)
         $('input').value = db.get('input');
     }
 
-    // Load last calculations
-    $('input').value = db.get('input');
-
     // Apply settings
     applySettings();
 

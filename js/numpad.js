@@ -35,7 +35,7 @@ const appSettings = () => db.get('settings') || (db.set('settings', appDefaults)
 
 (() => {
     const appName = 'Numpad';
-    const appVersion = '1.2.0';
+    const appVersion = 'Demo';
 
     var settings;
 

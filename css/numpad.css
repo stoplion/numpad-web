@@ -1,5 +1,5 @@
 /**
- * @copyright 2019 Timur Atalay 
+ * @copyright 2020 Timur Atalay 
  * @Homepage https://github.com/bornova/numpad
  * @license MIT https://github.com/bornova/numpad/blob/master/LICENSE
  */
@@ -47,6 +47,11 @@ textarea {
     box-sizing: border-box;
 }
 
+text {
+    font-size: 11px;
+    fill: #444;
+}
+
 /* Windows Header */
 .header-win {
     -webkit-app-region: drag !important;
@@ -71,8 +76,9 @@ textarea {
 .header-win-title {
     float: left;
     font-size: 12px;
+    font-weight: 600;
     margin: 5px 0 0 8px;
-    color: #222222;
+    color: rgb(34, 53, 65);
 }
 
 .winButtons {
@@ -139,6 +145,7 @@ textarea {
 
 .header-mac-title {
     text-align: center;
+    font-family: 'Helvetica Neue', 'Open Sans';
     font-size: 12px;
     font-weight: 600;
     padding-top: 10px;
@@ -150,7 +157,7 @@ textarea {
     visibility: hidden;
 }
 
-.content {
+.panel {
     position: fixed;
     top: 50px;
     bottom: 40px;
@@ -365,7 +372,7 @@ textarea {
 
 .dialog-buttons {
     display: block;
-    margin-top:20px;
+    margin-top: 20px;
 }
 
 .dialog-open-wrapper {
@@ -400,6 +407,10 @@ textarea {
 .dialog-open-delete:hover {
     background: rgb(179, 49, 49);
     color: #ffffff;
+}
+
+.dialog-confirm {
+    z-index: 10010;
 }
 
 /* About dialog items */
@@ -463,6 +474,11 @@ textarea {
     background: #f4f4f4;
 }
 
+.plotOptions {
+    margin: 0 10px 0 10px;
+    line-height: 30px;
+}
+
 /* Help dialog Items */
 .helpBox {
     margin-bottom: 10px;
@@ -474,6 +490,8 @@ textarea {
     display: flex;
     flex-wrap: wrap;
     min-height: 100px;
+    max-height: calc(100vh - 190px);
+    overflow: scroll;
 }
 
 .searchResults>div {
@@ -532,7 +550,6 @@ textarea {
 .textBox {
     padding: 5px;
     border: 1px solid #ccc;
-    border-radius: 3px;
     width: 100%;
     max-width: 250px;
     box-sizing: border-box;

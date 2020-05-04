@@ -15,6 +15,7 @@ function calculate() {
     var scrolls = [];
     var answers = [];
     var totals = [];
+    var subtotals = [];
     var scope = {};
     var expLim = {
         lowerExp: -12,
@@ -57,16 +58,15 @@ function calculate() {
                 }
 
                 if (answer !== undefined) {
-                    scope.ans = scope['line' + lineNo] = answer;
-                    answer = math.format(answer, expLim);
+                    totals.push(answer);
+                    subtotals.push(answer);
 
+                    scope.ans = scope['line' + lineNo] = answer;
+
+                    answer = math.format(answer, expLim);
                     var a = answer.trim().split(' ')[0];
                     var b = answer.replace(a, '');
                     answer = !a.includes('e') && !isNaN(a) ? Number(a).toLocaleString(undefined, digits) + b : strip(answer);
-
-                    if (!isNaN(a)) totals.push(Number(a));
-
-                    scope.total = totals.reduce((a, b) => a + b, 0);
 
                     if (answer.match(/\w\(x\)/)) {
                         answer = '<a title="Plot ' + line + '" class="plotButton" data-func="' + line + '" uk-tooltip>Plot</a>';
@@ -74,6 +74,7 @@ function calculate() {
                     }
                 } else {
                     answer = '';
+                    subtotals = [];
                 }
             } catch (e) {
                 var errStr = String(e).replace(/'|"/g, '`');
@@ -82,6 +83,8 @@ function calculate() {
                     lineNo = '<span class="lineErrorNo">' + lineNo + '</span>';
                 }
             }
+        } else {
+            subtotals = [];
         }
 
         answers += answer + '<br>';
@@ -109,9 +112,14 @@ function calculate() {
 
     // Solver
     function solver(line) {
-        line = line.replace(/\bans\b/g, scope.ans);
-        line = line.replace(/\bnow\b/g, scope.now);
-        line = line.replace(/\btoday\b/g, scope.today);
+        var subtotal = subtotals.length > 0 ? '(' + subtotals.join('+') + ')' : 0;
+        var total = totals.length > 0 ? '(' + totals.join('+') + ')' : 0;
+
+        line = line.replace(/\bans\b/g, scope.ans)
+            .replace(/\bnow\b/g, scope.now)
+            .replace(/\btoday\b/g, scope.today)
+            .replace(/\bsubtotal\b/g, subtotal)
+            .replace(/\btotal\b/g, total);
 
         var lineNoReg = line.match(/\bline\d+\b/g);
         if (lineNoReg) lineNoReg.map(n => line = line.replace(n, scope[n]));

@@ -15,20 +15,16 @@ const db = {
 
 // App Settings
 const appDefaults = {
-    'precision': '4',
+    'precision': '3',
     'dateFormat': 'l',
     'inputWidth': '50%',
     'autoRates': true,
     'resizable': true,
     'lineErrors': true,
     'lineNumbers': true,
-    'plotRange': {
-        'xMin': -10,
-        'xMax': 10,
-        'yMin': -10,
-        'yMax': 10,
-        'step': 0.5
-    }
+    'plotGridLines': false,
+    'plotTipLines': false,
+    'plotClosed': false,
 };
 
 const appSettings = () => db.get('settings') || (db.set('settings', appDefaults), appDefaults);
@@ -47,7 +43,15 @@ const appSettings = () => db.get('settings') || (db.set('settings', appDefaults)
     // Default content if first visit
     if (!db.get('firstTime')) {
         $('input').value = (
-            'version # In addition to all math.js features you can do:\n' +
+            '# In addition to all math.js features you can do:\n' +
+            '# Subtotal all numbers in a block\n' +
+            '3+5\n' +
+            '8*2\n' +
+            'subtotal\n' +
+            '\n' +
+            '# Total everything up to this point\n' +
+            'total\n' +
+            '\n' +
             '# Dates & Times\n' +
             'today\n' +
             'today + 1 day + 2 weeks\n' +
@@ -68,11 +72,8 @@ const appSettings = () => db.get('settings') || (db.set('settings', appDefaults)
             'ans * 5\n' +
             '\n' +
             '# line# token\n' +
-            'line19 * 5 / 2\n' +
+            'line27 * 5 / 2\n' +
             'line12 + 10 days\n' +
-            '\n' +
-            '# Total all numbers up to this point\n' +
-            'total\n' +
             '\n' +
             '# Percentages\n' +
             '5% of 100\n' +
@@ -81,15 +82,15 @@ const appSettings = () => db.get('settings') || (db.set('settings', appDefaults)
             '100 + 20% of 100 + 10%3 - 10%\n' +
             '(100 + 20%)% of 80 + 10%3 - 10%\n' +
             '120% of 80 + (10%3 - 10%)\n' +
-            'line22% of 80\n' +
-            'line22 - ans%\n' +
-            'line31 + line19%\n' +
+            'line26% of 80\n' +
+            'line34 - ans%\n' +
+            'line35 + line26%\n' +
             '\n' +
             '#Currencies (data from floatrates.com)\n' +
             '1 USD to EUR\n' +
             '25 EUR to CAD\n' +
             '\n' +
-            '# Plot functions using Plotly\n' +
+            '# Plot functions\n' +
             'f(x) = sin(x)\n' +
             'f(x) = 2x^2 + 3x -5\n'
         );
@@ -118,13 +119,13 @@ const appSettings = () => db.get('settings') || (db.set('settings', appDefaults)
 
         // Panel resizer
         var handle = document.querySelector('.handle');
-        var panel = handle.closest('.content');
+        var panel = handle.closest('.panel');
         var resize = panel.querySelector('.resize');
         var isResizing = false;
 
-        $('content').addEventListener('mouseup', (e) => isResizing = false);
-        $('content').addEventListener('mousedown', (e) => isResizing = e.target === handle);
-        $('content').addEventListener('mousemove', (e) => {
+        $('panel').addEventListener('mouseup', (e) => isResizing = false);
+        $('panel').addEventListener('mousedown', (e) => isResizing = e.target === handle);
+        $('panel').addEventListener('mousemove', (e) => {
             var offset = $('lineNo').style.display == 'block' ? 54 : 30;
             var pointerRelativeXpos = e.clientX - panel.offsetLeft - offset;
             var iWidth = pointerRelativeXpos / panel.clientWidth * 100;
@@ -167,6 +168,14 @@ const appSettings = () => db.get('settings') || (db.set('settings', appDefaults)
             calculate();
         }
 
+        // Show modal dialog
+        function showModal(id) {
+            UIkit.modal(id, {
+                bgClose: false,
+                stack: true
+            }).show();
+        }
+
         // App button actions
         $('actions').addEventListener('click', (e) => {
             switch (e.target.id) {
@@ -193,19 +202,18 @@ const appSettings = () => db.get('settings') || (db.set('settings', appDefaults)
                         $('printLines').innerHTML = $('lineNo').innerHTML;
                         $('printInput').innerHTML = $('input').value;
                         $('printOutput').innerHTML = $('output').innerHTML;
-                        ipc.send('print');
-                        ipc.once('printReply', (event, response) => showMsg(response));
+                        window.print();
                     }
                     break;
                 case 'saveButton': // Save calcualtions
                     if ($('input').value !== '') {
                         $('saveTitle').value = '';
-                        UIkit.modal('#dialog-save').show();
+                        showModal('#dialog-save');
                         $('saveTitle').focus();
                     }
                     break;
                 case 'openButton': // Open saved calculations
-                    UIkit.modal('#dialog-open').show();
+                    showModal('#dialog-open');
                     break;
                 case 'undoButton': // Undo action
                     $('input').value = db.get('undoData');
@@ -214,14 +222,14 @@ const appSettings = () => db.get('settings') || (db.set('settings', appDefaults)
                     break;
 
                 case 'settingsButton': // Open settings dialog
-                    UIkit.modal('#dialog-settings').show();
+                    showModal('#dialog-settings');
                     break;
                 case 'helpButton': // Open help dialog
-                    UIkit.modal('#dialog-help').show();
+                    showModal('#dialog-help');
                     $('searchBox').focus();
                     break;
                 case 'aboutButton': // Open app info dialog
-                    UIkit.modal('#dialog-about').show();
+                    showModal('#dialog-about');
                     break;
             }
             e.stopPropagation();
@@ -232,7 +240,15 @@ const appSettings = () => db.get('settings') || (db.set('settings', appDefaults)
             switch (e.target.className) {
                 case 'plotButton': // Plot function
                     func = e.target.getAttribute('data-func');
-                    plot();
+                    try {
+                        $('plotGridLines').checked = settings.plotGridLines;
+                        $('plotTipLines').checked = settings.plotTipLines;
+                        $('plotClosed').checked = settings.plotClosed;
+                        plot();
+                        showModal('#dialog-plot');
+                    } catch (error) {
+                        showError(error);
+                    }
                     break;
                 case 'lineError': // Show line error
                     var num = e.target.getAttribute('data-line');
@@ -244,14 +260,6 @@ const appSettings = () => db.get('settings') || (db.set('settings', appDefaults)
         });
 
         // Dialog button actions
-        // Dialog defaults
-        UIkit.mixin({
-            data: {
-                bgClose: false,
-                stack: true
-            }
-        }, 'modal');
-
         document.addEventListener('click', (e) => {
             switch (e.target.id) {
                 case 'dialog-save-save': // Save calculation
@@ -292,51 +300,26 @@ const appSettings = () => db.get('settings') || (db.set('settings', appDefaults)
                     });
                     break;
                 case 'dialog-settings-reset': // Reset app
-                    confirm('All user settings and data will be lost.', () => {
-                        localStorage.clear();
-                        location.reload();
-                    });
+                    confirm('All user settings and data will be lost.', () => ipc.send('resetApp'));
                     break;
                 case 'updateRatesButton': // Update exchange rates
                     getRates();
                     break;
-                case 'plotRangeButton': // Show plot range settings
-                    UIkit.modal('#dialog-plotRange').show();
+                    // Plot settings
+                case 'plotGridLines':
+                    settings.plotGridLines = $('plotGridLines').checked;
+                    db.set('settings', settings);
+                    plot(true);
                     break;
-                case 'set-plotRange': // Save plot range settings
-                    var allValid = true;
-                    var plotRange = settings.plotRange;
-                    Object.keys(plotRange).map(key => {
-                        var val = $(key).value;
-                        var min = $(key).getAttribute('min') || -1000000;
-                        var max = $(key).getAttribute('max') || 1000000;
-
-                        if (!isNaN(val) && ((val - min) * (val - max) <= 0)) {
-                            $(key).style.backgroundColor = 'transparent';
-                            UIkit.tooltip('#' + key).$destroy();
-                            plotRange[key] = $(key).value;
-                        } else {
-                            $(key).style.backgroundColor = 'rgba(179, 49, 49, 0.2)';
-                            UIkit.tooltip('#' + key, {
-                                title: 'Enter a value between ' + min + ' and ' + max
-                            });
-                            allValid = false;
-                        }
-                    });
-                    if (allValid) {
-                        db.set('settings', settings);
-                        UIkit.modal('#dialog-plotRange').hide();
-                        plot();
-                    }
+                case 'plotTipLines':
+                    settings.plotTipLines = $('plotTipLines').checked;
+                    db.set('settings', settings);
+                    plot(true);
                     break;
-                case 'reset-plotRange': // Reset plot range
-                    confirm('Reset plot range to defaults?', () => {
-                        var plotRange = settings.plotRange;
-                        Object.keys(plotRange).map(key => plotRange[key] = appDefaults.plotRange[key]);
-                        db.set('settings', settings);
-                        UIkit.modal('#dialog-plotRange').hide();
-                        plot();
-                    });
+                case 'plotClosed':
+                    settings.plotClosed = $('plotClosed').checked;
+                    db.set('settings', settings);
+                    plot(true);
                     break;
             }
         });
@@ -438,79 +421,62 @@ const appSettings = () => db.get('settings') || (db.set('settings', appDefaults)
         $('dialog-about-title').innerHTML = appName + ' Calculator';
         $('dialog-about-appVersion').innerHTML = 'Version ' + appVersion;
 
-        // Initiate plot range dialog
-        UIkit.util.on('#dialog-plotRange', 'beforeshow', () => {
-            var plotRange = settings.plotRange;
-            Object.keys(plotRange).map(key => {
-                $(key).style.backgroundColor = 'transparent';
-                $(key).value = plotRange[key];
-            });
-        });
-
         // Plot
         var func;
+        var activePlot;
 
-        function plot() {
+        function plot(plotResize = false) {
             $('plotTitle').innerHTML = func;
-            try {
-                var plotRange = settings.plotRange;
-                var expr = math.compile(func.split('=')[1]);
-                var xValues = math.range(plotRange.xMin * 100, plotRange.xMax * 100, plotRange.step).toArray();
-                var yValues = xValues.map(x => expr.evaluate({
-                    x: x
-                }));
-                var trace1 = {
-                    x: xValues,
-                    y: yValues,
-                    type: 'scatter',
-                    line: {
-                        shape: 'spline'
-                    }
-                };
-                var data = [trace1];
-                var layout = {
-                    autosize: true,
-                    margin: {
-                        l: 40,
-                        r: 20,
-                        b: 30,
-                        t: 30,
-                        pad: 10
-                    },
-                    width: window.innerWidth - 75,
-                    height: window.innerHeight - 160,
-                    xaxis: {
-                        range: [plotRange.xMin, plotRange.xMax]
-                    },
-                    yaxis: {
-                        range: [plotRange.yMin, plotRange.yMax]
-                    }
-                };
-                Plotly.newPlot('plot', data, layout, {
-                    scrollZoom: true
-                });
-            } catch (error) {
-                showError(error);
-            }
-            UIkit.modal('#dialog-plot').show();
+
+            var f = func.split("=")[1];
+            var domain = math.abs(math.evaluate(f, {
+                x: 0
+            })) * 2;
+
+            if (domain == Infinity || domain == 0) domain = 10;
+
+            var xDomain = plotResize ? activePlot.meta.xScale.domain() : [-domain, domain];
+            var yDomain = plotResize ? activePlot.meta.yScale.domain() : [-domain, domain];
+
+            activePlot = functionPlot({
+                target: '#plot',
+                height: window.innerHeight - 175,
+                width: window.innerWidth - 55,
+                xAxis: {
+                    domain: xDomain
+                },
+                yAxis: {
+                    domain: yDomain
+                },
+                tip: {
+                    xLine: settings.plotTipLines,
+                    yLine: settings.plotTipLines,
+                    renderer: (x, y, index) => {}
+                },
+                grid: settings.plotGridLines,
+                data: [{
+                    fn: f,
+                    graphType: 'polyline',
+                    closed: settings.plotClosed
+                }],
+                plugins: [
+                    functionPlot.plugins.zoomBox()
+                ]
+            });
         }
 
         // Relayout plot on window resize
         window.addEventListener('resize', () => {
-            if ($('dialog-plot').classList.contains('uk-open')) {
-                var h = window.innerHeight;
-                var w = window.innerWidth;
-                Plotly.relayout('plot', {
-                    width: w - 75,
-                    height: h - 160
-                });
+            if (activePlot && document.querySelector("#dialog-plot").classList.contains("uk-open")) {
+                plotResize = true;
+                plot(true);
             }
         });
 
         // Show confirmation dialog
         function confirm(msg, action) {
             $('confirmMsg').innerHTML = msg;
-            UIkit.modal('#dialog-confirm').show();
+            showModal('#dialog-confirm');
             var yesAction = (e) => {
                 action();
                 e.stopPropagation();
@@ -527,7 +493,7 @@ const appSettings = () => db.get('settings') || (db.set('settings', appDefaults)
                 $('errTitle').innerHTML = title || 'Error';
                 $('errMsg').innerHTML = e;
             });
-            UIkit.modal('#dialog-error').show();
+            showModal('#dialog-error');
         }
 
         // Show app messages

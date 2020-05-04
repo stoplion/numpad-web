@@ -1,5 +1,5 @@
 /**
- * @copyright 2019 Timur Atalay 
+ * @copyright 2020 Timur Atalay 
  * @Homepage https://github.com/bornova/numpad
  * @license MIT https://github.com/bornova/numpad/blob/master/LICENSE
  */
@@ -13,9 +13,18 @@ h2 {
     margin: 0 0 15px 0;
 }
 
+.uk-modal {
+    background: rgba(0, 0, 0, .5);
+}
+
+.uk-modal-full {
+    padding-left: 20px;
+    padding-right: 20px;
+    background: rgba(0, 0, 0, .5);
+}
+
 .uk-modal-dialog {
     transition: 0s linear;
-    border-radius: 3px;
 }
 
 .uk-modal-body {
@@ -30,12 +39,6 @@ h2 {
 
 .uk-modal-footer {
     padding: 15px;
-}
-
-.uk-modal-full {
-    padding-left: 20px;
-    padding-right: 20px;
-    background: rgba(0, 0, 0, .6);
 }
 
 .uk-grid+.uk-grid {
@@ -55,7 +58,6 @@ h2 {
     padding: 0 10px;
     line-height: 28px;
     font-size: .875rem;
-    border-radius: 3px;
 }
 
 .uk-button-default {
@@ -73,7 +75,8 @@ h2 {
     background: #eeeeee;
 }
 
-.uk-button-danger, .uk-button-danger:focus {
+.uk-button-danger,
+.uk-button-danger:focus {
     background-color: #f5f5f5;
     color: rgba(189, 46, 46, 0.9);
     border-color: #e5e5e5;
@@ -116,6 +119,7 @@ h2 {
 }
 
 .uk-overflow-auto {
+    min-height: 175px;
     max-height: calc(100vh - 250px);
 }
 
@@ -123,7 +127,12 @@ h2 {
     min-height: 1.6em;
 }
 
-/* Plotly */
-.modebar-container {
-    height: 24px;
+.uk-tooltip {
+    background: #535353;
+    z-index: 1000000;
+}
+
+/* Function Plot */
+.top-right-legend {
+    fill: #4682b4;
 }
